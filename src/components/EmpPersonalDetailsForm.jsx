@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import '../EmpDetailsForm.css';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
 const EmpPersonalDetailsForm = () => {
+  const navigate = useNavigate();
   const [searchText, setSearchText] = useState('');
   const [employee, setEmployee] = useState({
     name: '',
@@ -81,6 +83,17 @@ const EmpPersonalDetailsForm = () => {
     }
   };
 
+  
+
+  const handleNext = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      // Save the employee details to a storage (e.g., Redux, context API, etc.) or pass them as state to the next page
+      // Here, we will pass the employee details as state to the next page
+      navigate('/emp-project-details', { state: { employee } });
+    }
+  };
+  
 
 
   return (
@@ -195,7 +208,7 @@ const EmpPersonalDetailsForm = () => {
 
               <div className="form-group row mb-3 d-flex align-items-center justify-content-center  text-end" >
                 <div className="col-sm-10  offset-sm-2">
-                  <button type="submit" className="btn btn-primary ">Submit</button>
+                  <button onClick={handleNext} className="btn btn-primary ">Next</button>
                 </div>
               </div>
 

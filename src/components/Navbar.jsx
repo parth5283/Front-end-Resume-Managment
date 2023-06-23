@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import { NavLink } from 'react-router-dom';
 import logo from "../images/logo.svg";
-import '../Navbar.css';
+
 
 const Navbar = () => {
   const [activeNavItem, setActiveNavItem] = useState('home');
