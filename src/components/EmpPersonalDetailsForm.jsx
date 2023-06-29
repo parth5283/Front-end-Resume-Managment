@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { updateName,updateEmail,updatePhoneNumber,updateAddress,updateZipCode,updateProfileSummary } from '../redux/employeeSlice';
 
 const EmpPersonalDetailsForm = () => {
+  const employeePersonal = useSelector((state) => state.employee);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState('');
   const [employee, setEmployee] = useState({
@@ -88,12 +91,17 @@ const EmpPersonalDetailsForm = () => {
   const handleNext = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      // Save the employee details to a storage (e.g., Redux, context API, etc.) or pass them as state to the next page
-      // Here, we will pass the employee details as state to the next page
+      console.log('Dispatching updateName:', employee.name);
+      dispatch(updateName(employee.name));
+      dispatch(updateEmail(employee.email));
+      dispatch(updatePhoneNumber(employee.phonenumber));
+      dispatch(updateAddress(employee.address));
+      dispatch(updateZipCode(employee.zipcode));
+      dispatch(updateProfileSummary(employee.profilesummary));
+      console.log('Dispatching employee:', { state: { employee } });
       navigate('/emp-project-details', { state: { employee } });
     }
   };
-  
 
 
   return (

@@ -3,17 +3,20 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { FaChevronRight, FaChevronLeft, FaTimes, FaPlus } from 'react-icons/fa';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { addSkillsCertificates,updateCertificationName,updateCertificationStartDate,updateCertificationEndDate } from '../redux/certificateSlice';
+import { updateSkills } from '../redux/skillsSlice';
 const EmpSkillCertificationForm = () => {
+  const certificates = useSelector((state) => state.certificates);
+  const skils = useSelector((state) => state.skills);
   const navigate = useNavigate();
   const location = useLocation();
-
+  const dispatch = useDispatch();
   const { employee, projects } = location.state || {};
 
   const [certifications, setCertifications] = useState([
     {
       certificationName: '',
-      certificationAuthority: '',
       certificationStartDate: '',
       certificationExpiryDate: '',
       errors: {},
@@ -34,7 +37,6 @@ const EmpSkillCertificationForm = () => {
       ...certifications,
       {
         certificationName: '',
-        certificationAuthority: '',
         certificationStartDate: '',
         certificationExpiryDate: '',
         errors: {},
@@ -52,6 +54,11 @@ const EmpSkillCertificationForm = () => {
     if (validateForm()) {
       console.log(certifications);
       console.log(skills);
+      dispatch(addSkillsCertificates(certificates));
+      dispatch(updateSkills(skills));
+      //dispatch(updateSkills(employee.skills));
+      navigate('/resume', {state: { employee: skills, certifications }}); 
+      console.log( 'data',{state: { employee: skills, certifications }});
       // Perform form submission or any other desired action
     }
   };
@@ -69,10 +76,6 @@ const EmpSkillCertificationForm = () => {
         formIsValid = false;
       }
 
-      if (certification.certificationAuthority.trim() === '') {
-        errors.certificationAuthority = 'Please enter a certification authority';
-        formIsValid = false;
-      }
 
       if (certification.certificationStartDate.trim() === '') {
         errors.certificationStartDate = 'Please select a certification start date';
@@ -85,6 +88,10 @@ const EmpSkillCertificationForm = () => {
       }
 
       updatedCertifications[i].errors = errors;
+      dispatch(updateCertificationName({ index: i, name: certification.certificationName }));
+      dispatch(updateCertificationStartDate({ index: i, startDate: certification.certificationStartDate }));
+      dispatch(updateCertificationEndDate({ index: i, endDate: certification.certificationExpiryDate }));
+  
     }
 
     setCertifications(updatedCertifications);
@@ -130,7 +137,7 @@ const EmpSkillCertificationForm = () => {
                       {certification.errors.certificationName && <div className='invalid-feedback'>{certification.errors.certificationName}</div>}
                     </div>
                   </div>
-                  <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${certification.errors.certificationAuthority ? 'has-error' : ''}`}>
+                  {/* <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${certification.errors.certificationAuthority ? 'has-error' : ''}`}>
                     <label htmlFor={`certificationAuthority-${index}`} className='col-md-4 col-form-label text-start'>
                       Certification Authority
                     </label>
@@ -149,7 +156,7 @@ const EmpSkillCertificationForm = () => {
                         <div className='invalid-feedback'>{certification.errors.certificationAuthority}</div>
                       )}
                     </div>
-                  </div>
+                  </div> */}
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${certification.errors.certificationStartDate ? 'has-error' : ''}`}>
                     <label htmlFor={`certificationStartDate-${index}`} className='col-md-4 col-form-label text-start'>
                       Certification Start Date

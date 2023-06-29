@@ -3,11 +3,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { FaChevronRight, FaChevronLeft, FaTimes, FaPlus } from 'react-icons/fa';
 import 'react-tagsinput/react-tagsinput.css';
 import TagsInput from 'react-tagsinput';
+import { useSelector, useDispatch } from 'react-redux';
+import {addProject,updateName,updateStartDate,updateEndDate,updateTechnologiesUsed,updateRolesAndResponsbilities,updateProjectDescription  } from '../redux/projectSlice';
+
 
 const EmpProjectDetailsForm = () => {
+  const project = useSelector((state) => state.projects);
   const location = useLocation();
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const { employee } = location.state || {};
 
   const [projects, setProjects] = useState([
@@ -42,18 +46,6 @@ const EmpProjectDetailsForm = () => {
   };
   
 
-  // const handleProjectChange = (index, e) => {
-  //   const { name, value } = e.target;
-  //   const updatedProjects = [...projects];
-  //   updatedProjects[index] = { ...updatedProjects[index], [name]: value };
-  //   setProjects(updatedProjects);
-  // };
-
-  // const handleTechnologiesChange = (index, tags) => {
-  //   const updatedProjects = [...projects];
-  //   updatedProjects[index] = { ...updatedProjects[index], technologiesUsed: tags };
-  //   setProjects(updatedProjects);
-  // };
   const handleTechnologiesChange = (index, tags) => {
     const updatedProjects = [...projects];
     updatedProjects[index] = { ...updatedProjects[index], technologiesUsed: tags };
@@ -99,6 +91,7 @@ const EmpProjectDetailsForm = () => {
 
   const handleNext = () => {
     if (validateForm()) {
+      dispatch(addProject(project));
       console.log(projects);
       navigate('/emp-certificates-skills-form', { state: { employee, projects } });
     }
@@ -106,6 +99,7 @@ const EmpProjectDetailsForm = () => {
 
   const validateForm = () => {
     let formIsValid = true;
+    let i;
     const updatedProjects = [...projects];
 
     for (let i = 0; i < updatedProjects.length; i++) {
@@ -143,10 +137,19 @@ const EmpProjectDetailsForm = () => {
       }
 
       updatedProjects[i].errors = errors;
+      dispatch(updateName({ index: i, name: project.projectName }));
+      dispatch(updateStartDate({ index: i, startDate: project.startDate }));
+      dispatch(updateEndDate({ index: i, endDate: project.endDate }));
+      dispatch(updateTechnologiesUsed({ index: i, technologiesUsed: project.technologiesUsed }));
+      dispatch(updateRolesAndResponsbilities({ index: i, rolesAndResponsibilities: project.rolesAndResponsibilities }));
+      dispatch(updateProjectDescription({ index: i, projectDescription: project.projectDescription }));
+   
     }
 
     setProjects(updatedProjects);
+   
     return formIsValid;
+    
   };
 
   return (
