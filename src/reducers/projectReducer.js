@@ -1,9 +1,7 @@
-
-
   import { createSlice } from "@reduxjs/toolkit"
 
   const initialState = {
-    projectDetails: null
+    projects:[],
   }
   
   const projectReducer = createSlice({

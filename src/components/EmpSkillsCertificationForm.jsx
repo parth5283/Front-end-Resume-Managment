@@ -5,16 +5,15 @@ import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { addSkillsCertificates,updateCertificationName,updateCertificationStartDate,updateCertificationEndDate } from '../redux/certificateSlice';
-import { updateSkills } from '../redux/skillsSlice';
+import { updateSkills } from '../redux/skillSlice';
 const EmpSkillCertificationForm = () => {
-  const certificates = useSelector((state) => state.certificates);
-  const skils = useSelector((state) => state.skills);
+  const skils = useSelector((state) => state.skill.skills);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const { employee, projects } = location.state || {};
 
-  const [certifications, setCertifications] = useState([
+  const [certificates, setCertifications] = useState([
     {
       certificationName: '',
       certificationStartDate: '',
@@ -27,45 +26,52 @@ const EmpSkillCertificationForm = () => {
 
   const handleCertificationChange = (index, e) => {
     const { name, value } = e.target;
-    const updatedCertifications = [...certifications];
+    const updatedCertifications = [...certificates];
     updatedCertifications[index] = { ...updatedCertifications[index], [name]: value };
     setCertifications(updatedCertifications);
   };
 
   const handleAddCertification = () => {
-    setCertifications([
-      ...certifications,
-      {
-        certificationName: '',
-        certificationStartDate: '',
-        certificationExpiryDate: '',
-        errors: {},
-      },
-    ]);
+    const newCertificate = {
+      certificationName: '',
+      certificationStartDate: '',
+      certificationExpiryDate: '',
+      errors: {},
+    };
+  
+    setCertifications([...certificates, newCertificate]);
+   
   };
 
   const handleRemoveCertification = (index) => {
-    const updatedCertifications = [...certifications];
+    const updatedCertifications = [...certificates];
     updatedCertifications.splice(index, 1);
     setCertifications(updatedCertifications);
   };
 
   const handleSubmit = () => {
     if (validateForm()) {
-      console.log(certifications);
-      console.log(skills);
-      dispatch(addSkillsCertificates(certificates));
-      dispatch(updateSkills(skills));
-      //dispatch(updateSkills(employee.skills));
-      navigate('/resume', {state: { employee: skills, certifications }}); 
-      console.log( 'data',{state: { employee: skills, certifications }});
+      certificates.forEach((certificate, index) => {
+        dispatch(updateCertificationName({ index, name: certificate.certificationName }));
+        dispatch(updateCertificationStartDate({ index, startDate: certificate.certificationStartDate }));
+        dispatch(updateCertificationEndDate({ index, endDate: certificate.certificationExpiryDate }));
+      });
+      skills.forEach((skill,index) =>{
+        dispatch(updateSkills({ index, skills: skills }));
+      });
+   
+      console.log("certificates",certificates);
+      console.log("skills",skills);
+      console.log("skils",skils)
+      navigate('/display', {state: { skills: skills, certificates:certificates }}); 
+      //console.log( 'data',{state: { employee: skills, certifications }});
       // Perform form submission or any other desired action
     }
   };
 
   const validateForm = () => {
     let formIsValid = true;
-    const updatedCertifications = [...certifications];
+    const updatedCertifications = [...certificates];
 
     for (let i = 0; i < updatedCertifications.length; i++) {
       const certification = updatedCertifications[i];
@@ -88,18 +94,25 @@ const EmpSkillCertificationForm = () => {
       }
 
       updatedCertifications[i].errors = errors;
-      dispatch(updateCertificationName({ index: i, name: certification.certificationName }));
-      dispatch(updateCertificationStartDate({ index: i, startDate: certification.certificationStartDate }));
-      dispatch(updateCertificationEndDate({ index: i, endDate: certification.certificationExpiryDate }));
-  
+      dispatch(addSkillsCertificates({
+        index: i,
+        certificate: {
+          certificationName: certification.certificationName,
+          certificationStartDate: certification.certificationStartDate,
+          certificationExpiryDate: certification.certificationExpiryDate,
+          
+        },
+      }));
+    
     }
 
     setCertifications(updatedCertifications);
+   
     return formIsValid;
   };
 
   const handlePrevious = () => {
-    navigate('/emp-project-details', { state: { certifications } }); // Navigate to the previous form (EmpProjectDetailsForm)
+    navigate('/emp-project-details', { state: { certificates } }); // Navigate to the previous form (EmpProjectDetailsForm)
   };
 
   return (
@@ -111,7 +124,7 @@ const EmpSkillCertificationForm = () => {
           </div>
           <div className='form-container'>
             <form className='p-4 form_block'>
-              {certifications.map((certification, index) => (
+              {certificates.map((certification, index) => (
                 <div key={index} className='certification-details my-3'>
                   <h4 className='text-center'>
                     Certification {index + 1}

@@ -4,11 +4,11 @@ import { FaChevronRight, FaChevronLeft, FaTimes, FaPlus } from 'react-icons/fa';
 import 'react-tagsinput/react-tagsinput.css';
 import TagsInput from 'react-tagsinput';
 import { useSelector, useDispatch } from 'react-redux';
-import {addProject,updateName,updateStartDate,updateEndDate,updateTechnologiesUsed,updateRolesAndResponsbilities,updateProjectDescription  } from '../redux/projectSlice';
-
+import {addProject,updateProjectName,updateStartDate,updateEndDate,updateTechnologiesUsed,updateRolesAndResponsbilities,updateProjectDescription  } from '../redux/projectSlice';
+import { saveProjectDetails } from '../reducers/projectReducer';
 
 const EmpProjectDetailsForm = () => {
-  const project = useSelector((state) => state.projects);
+  const projectss = useSelector((state) => state.project.projects);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -65,23 +65,22 @@ const EmpProjectDetailsForm = () => {
   
 
   const handleAddProject = () => {
-    setProjects([
-      ...projects,
-      {
-        projectName: '',
-        startDate: '',
-        endDate: '',
-        technologiesUsed: [],
-        rolesAndResponsibilities: '',
-        projectDescription: '',
-        errors: {},
-      },
-    ]);
+    const newProject = {
+      projectName: '',
+      startDate: '',
+      endDate: '',
+      technologiesUsed: [],
+      rolesAndResponsibilities: '',
+      projectDescription: '',
+      errors: {},
+    };
+  
+    setProjects([...projects, newProject]);
   };
 
   const handleRemoveProject = (index) => {
-    const updatedProjects = [...projects];
-    updatedProjects.splice(index, 1);
+   const updatedProjects = [...projects];
+   updatedProjects.splice(index, 1);
     setProjects(updatedProjects);
   };
 
@@ -91,8 +90,18 @@ const EmpProjectDetailsForm = () => {
 
   const handleNext = () => {
     if (validateForm()) {
-      dispatch(addProject(project));
-      console.log(projects);
+     // dispatch(saveProjectDetails(projects));
+     projects.forEach((project, index) => {
+      dispatch(updateProjectName({ index, name: project.projectName }));
+      dispatch(updateStartDate({ index, startDate: project.startDate }));
+      dispatch(updateEndDate({ index, endDate: project.endDate }));
+      dispatch(updateTechnologiesUsed({ index, technologiesUsed: project.technologiesUsed }));
+      dispatch(updateRolesAndResponsbilities({ index, rolesAndResponsibilities: project.rolesAndResponsibilities }));
+      dispatch(updateProjectDescription({ index, projectDescription: project.projectDescription }));
+    });
+    console.log("Projects",projects)
+    
+     //console.log("projectReducer",projectss);
       navigate('/emp-certificates-skills-form', { state: { employee, projects } });
     }
   };
@@ -105,7 +114,7 @@ const EmpProjectDetailsForm = () => {
     for (let i = 0; i < updatedProjects.length; i++) {
       const project = updatedProjects[i];
       const errors = {};
-
+         console.log("loop",i);
       if (project.projectName.trim() === '') {
         errors.projectName = 'Please enter a project name';
         formIsValid = false;
@@ -137,13 +146,17 @@ const EmpProjectDetailsForm = () => {
       }
 
       updatedProjects[i].errors = errors;
-      dispatch(updateName({ index: i, name: project.projectName }));
-      dispatch(updateStartDate({ index: i, startDate: project.startDate }));
-      dispatch(updateEndDate({ index: i, endDate: project.endDate }));
-      dispatch(updateTechnologiesUsed({ index: i, technologiesUsed: project.technologiesUsed }));
-      dispatch(updateRolesAndResponsbilities({ index: i, rolesAndResponsibilities: project.rolesAndResponsibilities }));
-      dispatch(updateProjectDescription({ index: i, projectDescription: project.projectDescription }));
-   
+      dispatch(addProject({
+        index: i,
+        project: {
+          name: project.projectName,
+          startDate: project.startDate,
+          endDate: project.endDate,
+          technologiesUsed: project.technologiesUsed,
+          rolesAndResponsibilities: project.rolesAndResponsibilities,
+          projectDescription: project.projectDescription,
+        },
+      }));
     }
 
     setProjects(updatedProjects);

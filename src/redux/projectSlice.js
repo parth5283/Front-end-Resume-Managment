@@ -16,7 +16,7 @@ const projectSlice = createSlice({
   },
   reducers: {
     // Add reducer functions to update the form fields
-    updateName: (state, action) => {
+    updateProjectName: (state, action) => {
       state.projectName = action.payload;
     },
     updateStartDate: (state, action) => {
@@ -40,5 +40,5 @@ const projectSlice = createSlice({
   },
 });
 
-export const { updateName,updateStartDate,updateEndDate,updateTechnologiesUsed,updateRolesAndResponsbilities,updateProjectDescription ,addProject} = projectSlice.actions;
+export const { updateProjectName,updateStartDate,updateEndDate,updateTechnologiesUsed,updateRolesAndResponsbilities,updateProjectDescription ,addProject} = projectSlice.actions;
 export default projectSlice.reducer;

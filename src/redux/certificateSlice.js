@@ -1,8 +1,8 @@
 // skillsandcertificatesSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
-const certificatesSlice = createSlice({
-  name: 'skillsandcertificates',
+const certificateSlice = createSlice({
+  name: 'certificate',
   initialState: {
     // Define initial state for employee details form
     certificationName: '',
@@ -31,5 +31,5 @@ const certificatesSlice = createSlice({
   },
 });
 
-export const { updateCertificationName,updateCertificationStartDate,updateCertificationEndDate,addSkillsCertificates} = certificatesSlice.actions;
-export default certificatesSlice.reducer;
+export const { updateCertificationName,updateCertificationStartDate,updateCertificationEndDate,addSkillsCertificates} = certificateSlice.actions;
+export default certificateSlice.reducer;
