@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import axios from 'axios';
 import './App.css';
 import About from './components/About';
 import EmpPersonalDetailsForm from './components/EmpPersonalDetailsForm';
@@ -7,8 +8,8 @@ import Login from './components/LoginPage';
 import Navbar from './components/Navbar';
 import EmployeeSearchTable from './components/EmployeeSearchTable';
 import './Navbar.css';
-import './EmpDetailsForm.css'
-import './EmployeeSearchTable.css'
+import './EmpDetailsForm.css';
+import './EmployeeSearchTable.css';
 import EmpProjectDetailsForm from './components/EmpProjectDetailsForm';
 import EmpSkillsCertificationForm from './components/EmpSkillsCertificationForm';
 import Display from './redux/Display';
@@ -16,11 +17,20 @@ import Display from './redux/Display';
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleLogin = (username, password) => {
-    // Simulating login logic with hardcoded credentials
-    if (username === 'hr' && password === 'hr') {
-      setIsLoggedIn(true);
-    } else {
+  const handleLogin = async (username, password) => {
+    try {
+      // Send a request to the server to validate the credentials
+      const response = await axios.post('/api/login', { username, password });
+
+      // Assuming the server response contains a success flag
+      if (response.data.success) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+        // Display an error message to the user
+      }
+    } catch (error) {
+      console.log('Login error:', error);
       setIsLoggedIn(false);
       // Display an error message to the user
     }
@@ -55,6 +65,16 @@ const App = () => {
 };
 
 export default App;
+
+
+
+
+
+
+
+
+
+
 
 
 
