@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaChevronRight, FaChevronLeft, FaTimes, FaPlus } from 'react-icons/fa';
 import 'react-tagsinput/react-tagsinput.css';
@@ -12,9 +12,24 @@ const EmpProjectDetailsForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { employee } = location.state || {};
+  // const { employee,skills,certificates } = location.state || {};
 
-  const [projects, setProjects] = useState([
+  // const [projects, setProjects] = useState([
+  //   {
+  //     projectName: '',
+  //     startDate: '',
+  //     endDate: '',
+  //     technologiesUsed: [],
+  //     rolesAndResponsibilities: '',
+  //     projectDescription: '',
+  //     errors: {},
+  //   },
+  // ]);
+
+
+  const { employee, skills, certificates, previousData } = location.state || {};
+
+  const [projects, setProjects] = useState(previousData || [
     {
       projectName: '',
       startDate: '',
@@ -25,6 +40,14 @@ const EmpProjectDetailsForm = () => {
       errors: {},
     },
   ]);
+
+  useEffect(() => {
+    if (previousData) {
+      setProjects(previousData);
+    }
+  }, [previousData]);
+
+  
 
   const handleProjectChange = (index, e) => {
     const { name, value } = e.target;
@@ -85,8 +108,10 @@ const EmpProjectDetailsForm = () => {
   };
 
   const handlePrevious = () => {
-    navigate('/', { state: { employee } });
-  };
+  navigate('/', { state: { employee, projects } });
+};
+
+  
 
   const handleNext = () => {
     if (validateForm()) {
@@ -102,7 +127,7 @@ const EmpProjectDetailsForm = () => {
     console.log("Projects",projects)
     
      //console.log("projectReducer",projectss);
-      navigate('/emp-certificates-skills-form', { state: { employee, projects } });
+      navigate('/emp-certificates-skills-form', { state: { employee, projects,skills,certificates } });
     }
   };
 

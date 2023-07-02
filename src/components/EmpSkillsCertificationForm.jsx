@@ -6,7 +6,10 @@ import 'react-tagsinput/react-tagsinput.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { addSkillsCertificates,updateCertificationName,updateCertificationStartDate,updateCertificationEndDate } from '../redux/certificateSlice';
 import { updateSkills } from '../redux/skillSlice';
+
+
 const EmpSkillCertificationForm = () => {
+  
   const skils = useSelector((state) => state.skill.skills);
   const navigate = useNavigate();
   const location = useLocation();
@@ -112,7 +115,9 @@ const EmpSkillCertificationForm = () => {
   };
 
   const handlePrevious = () => {
-    navigate('/emp-project-details', { state: { certificates } }); // Navigate to the previous form (EmpProjectDetailsForm)
+    
+    navigate('/emp-project-details', { state: { employee, previousData: projects, skills, certificates } });
+
   };
 
   return (
