@@ -20,7 +20,7 @@ const App = () => {
   const handleLogin = async (username, password) => {
     try {
       // Send a request to the server to validate the credentials
-      const response = await axios.post('/api/login', { username, password });
+      const response = await axios.get('http://localhost:8080/api/v1/employees/get-users', { username, password });
 
       // Assuming the server response contains a success flag
       if (response.data.success) {

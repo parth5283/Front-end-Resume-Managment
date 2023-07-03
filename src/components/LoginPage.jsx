@@ -28,7 +28,7 @@ const LoginPage = ({ handleLogin }) => {
     // If there are no errors, proceed with login
     if (Object.keys(newErrors).length === 0) {
       try {
-        const response = await axios.post('/api/login', { username, password });
+        const response = await axios.get('http://localhost:8080/api/v1/employees/get-users', { username, password });
         // Assuming the server response contains a success flag
         if (response.data.success) {
           handleLogin(username, password);

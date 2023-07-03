@@ -2,6 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { getSkills } from './store';
+import axios from 'axios';
 const Display = () => {
   const empname = useSelector((state) => state.employee.name);
   const empemail = useSelector((state) => state.employee.email);
@@ -19,6 +20,46 @@ const Display = () => {
   skills.forEach(skill => {
     console.log("skill",skill.skills); // Example: Logging each skill item to the console
   });
+  const handleDataSubmit = async () => {
+    const employeeData = {
+        name: empname,
+        email: empemail,
+        phonenumber:empphonenumber,
+        email:empemail,
+        address:empaddress,
+        zipcode:empzipcode,
+        profilesummary:empprofileSummary,
+        // Include other employee properties
+      };
+      const employeeResponse = await axios.post('http://localhost:8080/api/v1/employees/add-employee', employeeData);
+      
+    const { message, employeeId } = employeeResponse.data;
+    console.log("message", message);
+    console.log("employeeId", employeeId);
+      // Submit project data
+      const projectData = projects.map((project) => ({
+        employeeId: employeeResponse.data.employeeId,
+        project: {
+            projectname: project.project.name,
+            startdate: project.project.startDate,
+            enddate: project.project.endDate,
+            technologiesused: project.project.technologiesUsed.join(","),
+            rolesandresponsibilities: project.project.rolesAndResponsibilities,
+            projectdescription: project.project.projectDescription,
+                  }
+              }));
+     // console.log("name:",project.project.projectname);
+      console.log("project Data:", projectData);
+      
+      axios.post('http://localhost:8080/api/v1/employees/add-projects', { projects: projectData })
+        .then((response) => {
+          console.log('Data stored successfully:', response.data);
+        })
+        .catch((error) => {
+          console.log('An error occurred:', error);
+        });
+
+  }
   return (
     <div>
       <h1>Employee Details</h1>
@@ -68,6 +109,7 @@ const Display = () => {
           </div>
         );
       })}
+       <button onClick={handleDataSubmit}>Submit Data</button>
     </div>
   );
 };
