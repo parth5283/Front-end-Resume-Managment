@@ -1,0 +1,185 @@
+.container {
+    margin: 20px auto;
+   
+  }
+  
+  .preview-data-display {
+    padding: 70px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .company-description {
+    margin-bottom: 30px;
+  }
+  
+  .company-logo {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .company-address {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 0;
+  }
+  
+  .employee-name-block {
+    margin-bottom: 30px;
+  }
+  
+  .employee-name-wrapper {
+    margin-top: 20px;
+  }
+  
+  .employee-name {
+    font-size: 24px;
+    color: #59b7df;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+  
+  
+  .profile-summary-block {
+    margin-bottom: 30px;
+  }
+  
+  .summary-heading {
+    margin-bottom: 10px;
+    color: #59b7df;
+}
+  
+  .summary-details {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #555;
+  }
+  
+  .certifications-block {
+    margin-bottom: 30px;
+  }
+  
+  .certifications-heading-block {
+    margin-bottom: 10px;
+    color:#59b7df;
+  }
+  
+  .certification {
+    margin-bottom: 10px;
+  }
+  
+  .technical-skills-block {
+    margin-bottom: 30px;
+  }
+  
+  .skills-heading {
+    margin-bottom: 10px;
+    color: #59b7df;
+  }
+  
+  .skills-details {
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .skills {
+    display: inline-block;
+    padding: 5px 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    background-color: #f1f1f1;
+    color: #555;
+    border-radius: 4px;
+  }
+  
+  .project-summary-block {
+    margin-bottom: 30px;
+  }
+  
+  .project-summary-heading {
+    margin-bottom: 10px;
+    color: #59b7df;
+  }
+  
+  .project-details {
+    font-size: 16px;
+    color: #555;
+  }
+  
+  .table-bordered {
+    border: 1px solid #ddd;
+  }
+  
+  .table-collapse {
+    border-collapse: collapse;
+  }
+  
+  .table th,
+  .table td {
+    padding: 8px 12px;
+  }
+  
+  .table th {
+    font-weight: bold;
+    text-align: left;
+    background-color: #f1f1f1;
+  }
+  
+  .submit-button-blocks {
+    margin-top: 30px;
+    text-align: right;
+  }
+  
+  .btn-secondary {
+    background-color: #888;
+    color: #fff;
+    border: none;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #555;
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+
+
+  .company-description {
+    height: auto;
+    margin-top: 50px; 
+    border-bottom: 2px solid #59b7df;
+  }
+  
+  .logo-wrapper,
+  .address-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+  }
+  
+  .logo-wrapper img {
+    width: 300px;
+    height: auto;
+    object-fit: contain;
+  }
+  
+  .company-address {
+    margin-right: 26px;
+  }
+  
+  .employee-name-block , .profile-summary-wrapper, .Certifications-block, .technical-skills-block, .project-summary-block {
+    
+    padding: 20px;
+    border-bottom: 2px solid #59b7df;
+  }
+  

@@ -1,8 +1,12 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+
 import { useSelector } from 'react-redux';
 import { getSkills } from './store';
 import axios from 'axios';
+import logo from '../images/preview-page-logo.png';
+import '../previewdata.css';
+
 const Display = () => {
     const empname = useSelector((state) => state.employee.name);
     const empemail = useSelector((state) => state.employee.email);
@@ -14,12 +18,17 @@ const Display = () => {
     const certificates = useSelector((state) => state.certificate.certificates);
     const skills = getSkills();
     const location = useLocation();
+    
+    
     const { employee } = location.state || {};
     const uniqueSkills = [...new Set(skills.map((skill) => skill.skills))];
     console.log("skills", skills);
     skills.forEach(skill => {
-        console.log("skill", skill.skills); // Example: Logging each skill item to the console
+        console.log("skill", skill.skills);
     });
+    // const handleBack = () => {
+    //     history.push('/emp-skill-certification-form');
+    //   };
     const handleDataSubmit = async () => {
         const employeeData = {
             name: empname,
@@ -29,7 +38,7 @@ const Display = () => {
             address: empaddress,
             zipcode: empzipcode,
             profilesummary: empprofileSummary,
-            // Include other employee properties
+
         };
         const employeeResponse = await axios.post('http://localhost:8080/api/v1/employees/add-employee', employeeData);
 
@@ -77,57 +86,150 @@ const Display = () => {
             });
     }
     return (
-        <div>
-            <h1>Employee Details</h1>
-            <p>Name: {empname}</p>
-            <p>Email: {empemail}</p>
-            <p>Phone Number: {empphonenumber}</p>
-            <p>Address: {empaddress}</p>
-            <p>Zip Code: {empzipcode}</p>
-            <p>Profile Summary: {empprofileSummary}</p>
-            <h2>Skills:</h2>
+        <>
+            <div className='container'>
+                <section className='preview-data-display '>
 
-            {uniqueSkills.map((skill, index) => (
-                <div key={index}>
-                    <p>{skill.join(",")}</p>
+                    <div className="row company-description">
+                        <div className="col-md-6 d-flex align-items-center justify-content-center logo-wrapper">
+                            <img src={logo} alt="cabot-logo" />
+                        </div>
+                        <div className="col-md-6 d-flex align-items-center address-wrapper">
+                            <div className="company-address">
+                                <p>
+                                    204, Second Floor,
+                                    <br />
+                                    Lulu Cyber Tower I,
+                                    <br />
+                                    Infopark,
+                                    <br />
+                                    Kochi- 682 042
+                                    <br />
+                                    info@cabotsolutions.com
+                                    <br />
+                                    +91-484-404-5555
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className='row employee-name-block'>
+
+                        <div className='col-md-12 text-center employee-name-wrapper'>
+                            <h2 className='font-weight-bold employee-name'>{empname}</h2>
+                        </div>
+                    </div>
+                    <div className='row profile-summary-wrapper'>
+                        <div className='col-md-12 summary-heading text-start'>
+                            <h4 className='font-weight-bold'>Profile Summary</h4>
+                        </div>
+                        <div className='col-md-12 summary-details'>
+                            <p>
+                                {empprofileSummary}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="row Certifications-block">
+                        <div className="col-md-12 certifications-heading-block">
+                            <h4 className="font-weight-bold">Licences/Certifications (if any)</h4>
+                        </div>
+                        <div className="col-md-12 certification-details">
+                            {certificates.map((certificate, index) => {
+                                console.log("certificate", certificate);
+                                return (
+                                    <div key={index}>
+
+                                        <div className="row">
+                                            <div className="col-md-6">
+                                                <strong>Certificate Name:</strong> {certificate.certificate.certificationName}
+                                            </div>
+                                            <div className="col-md-6">
+                                                <strong>Certificate Validity:</strong> {certificate.certificate.certificationStartDate} to {certificate.certificate.certificationExpiryDate}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="row technical-skills-block">
+                        <div className="col-md-12 skills-heading text-start">
+                            <h4 className="font-weight-bold">Technical Skills</h4>
+                        </div>
+                        <div className="col-md-12 skills-details">
+                            {uniqueSkills.map((skill, index) => (
+                                <span key={index} className="skills">
+                                    {skill.join(",   ")}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="row project-summary-block">
+                        <div className="col-md-12 project-summary-heading">
+                            <h4 className="font-weight-bold">Project Summary</h4>
+                        </div>
+                        <div className="col-md-12 project-details">
+                            <table className="table table-bordered table-collapse">
+                                <tbody>
+                                    {projects.map((project, index) => {
+                                        const technologiesUsed = Object.values(project.project.technologiesUsed);
+                                        const startDate = new Date(project.project.startDate);
+                                        const endDate = new Date(project.project.endDate);
+                                        const startMonthYear = startDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+                                        const endMonthYear = endDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+                                        return (
+                                            <><tr key={index}>
+                                                <th className="col-4" style={{ border: '1px solid #000' }}>Project Name:</th>
+                                                <td className="col-8" style={{ border: '1px solid #000' }}>{project.project.name}</td>
+                                            </tr><tr>
+                                                    <th className="col-4" style={{ border: '1px solid #000' }}>Timeline:</th>
+                                                    <td className="col-8" style={{ border: '1px solid #000' }}>{startMonthYear} - {endMonthYear}</td>
+                                                </tr><tr>
+                                                    <th className="col-4" style={{ border: '1px solid #000' }}>Technologies Used:</th>
+                                                    <td className="col-8" style={{ border: '1px solid #000' }}>{technologiesUsed.join(", ")}</td>
+                                                </tr><tr>
+                                                    <th className="col-4" style={{ border: '1px solid #000' }}>Roles and Responsibilities:</th>
+                                                    <td className="col-8" style={{ border: '1px solid #000' }}>{project.project.rolesAndResponsibilities}</td>
+                                                </tr><tr>
+                                                    <th className="col-4" style={{ border: '1px solid #000' }}>Project Description:</th>
+                                                    <td className="col-8" style={{ border: '1px solid #000' }}>{project.project.projectDescription}</td>
+                                                </tr></>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+
+
+                </section>
+
+                <div className="submit-button-blocks">
+                    <div className="row">
+                        <div className="col-md-6 text-start">
+                            {/* <button className="btn btn-secondary" onClick={handleBack}>Back</button> */}
+                        </div>
+                        <div className="col-md-6 text-end">
+                            <button className="btn btn-primary" onClick={handleDataSubmit}>Submit</button>
+                        </div>
+                    </div>
                 </div>
-            ))}
-
-            <h2>Projects:</h2>
-            {projects.map((project, index) => {
-                const technologiesUsed = Object.values(project.project.technologiesUsed);
 
 
-                return (
-                    <div key={index}>
-                        <h3>Project {index + 1}</h3>
-                        <p>Project Name: {project.project.name}</p>
-                        <p>Start Date: {project.project.startDate}</p>
-                        <p>End Date: {project.project.endDate}</p>
-                        <p>Technologies Used: {technologiesUsed.join(",")}</p>
-                        <p>Roles and Responsibilities: {project.project.rolesAndResponsibilities}</p>
-                        <p>Project Description: {project.project.projectDescription}</p>
-                        {/* Display other project properties */}
-                    </div>
-                );
-            })}
+            </div>
 
-            <h2>Certificates:</h2>
-            {certificates.map((certificate, index) => {
-                console.log("certificate", certificate);
-                return (
-                    <div key={index}>
-                        <h3>Certificate {index + 1}</h3>
-                        <p>Certificate Name: {certificate.certificate.certificationName}</p>
-                        <p>Certificate Start Date: {certificate.certificate.certificationStartDate}</p>
-                        <p>Certificate Expiry Date: {certificate.certificate.certificationExpiryDate}</p>
-                        {/* Display other certificate properties */}
-                    </div>
-                );
-            })}
-            <button onClick={handleDataSubmit}>Submit Data</button>
-        </div>
+        </>
+
     );
 };
 
 export default Display;
+
+
+
