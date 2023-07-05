@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 
 const LoginPage = ({ handleLogin }) => {
   const [username, setUsername] = useState('');
@@ -8,7 +7,7 @@ const LoginPage = ({ handleLogin }) => {
   const [validInputs, setValidInputs] = useState({});
   const [loginError, setLoginError] = useState(false);
 
-  const handleLoginFormSubmit = async (e) => {
+  const handleLoginFormSubmit = (e) => {
     e.preventDefault();
 
     // Validate form fields
@@ -27,16 +26,13 @@ const LoginPage = ({ handleLogin }) => {
 
     // If there are no errors, proceed with login
     if (Object.keys(newErrors).length === 0) {
-      try {
-        const response = await axios.get('http://localhost:8080/api/v1/employees/get-users', { username, password });
-        // Assuming the server response contains a success flag
-        if (response.data.success) {
-          handleLogin(username, password);
-        } else {
-          setLoginError(true);
-        }
-      } catch (error) {
-        console.log('Login error:', error);
+      // Hardcoded username and password for temporary login
+      const hardcodedUsername = 'admin';
+      const hardcodedPassword = 'password';
+
+      if (username === hardcodedUsername && password === hardcodedPassword) {
+        handleLogin(username, password);
+      } else {
         setLoginError(true);
       }
     }
@@ -143,6 +139,13 @@ export default LoginPage;
 
 
 
+
+
+
+
+
+
+
 // import React, { useState } from 'react';
 // import axios from 'axios';
 
@@ -173,7 +176,7 @@ export default LoginPage;
 //     // If there are no errors, proceed with login
 //     if (Object.keys(newErrors).length === 0) {
 //       try {
-//         const response = await axios.post('/api/login', { username, password });
+//         const response = await axios.get('http://localhost:8080/api/v1/employees/get-users', { username, password });
 //         // Assuming the server response contains a success flag
 //         if (response.data.success) {
 //           handleLogin(username, password);
@@ -213,43 +216,65 @@ export default LoginPage;
 
 //   return (
 //     <div className="container">
-//       <section className='emp_details_form LoginPage'>
-//         <div className='form-heading-block'>
-//           <h2 className="my-3 form-heading ">Cabot Solutions HR Personal Login</h2>
+//       <section className="emp_details_form LoginPage">
+//         <div className="form-heading-block">
+//           <h2 className="my-3 form-heading">HR Login</h2>
 //         </div>
-//         <div className='form-container'>
+//         <div className="form-container">
 //           <form onSubmit={handleLoginFormSubmit} className="p-5 form_block">
-//             <div className={`form-group row my-5 d-flex align-items-center justify-content-center ${errors.username ? 'has-error' : ''} ${validInputs.username ? 'has-success' : ''}`}>
-//               <label htmlFor="username" className=' col-md-4 col-form-label text-start'>Username <i className='fas fa-user ml-2'></i></label>
-//               <div className='col-md-8'>
+//             <div
+//               className={`form-group row my-5 d-flex align-items-center justify-content-center ${
+//                 errors.username ? 'has-error' : ''
+//               } ${validInputs.username ? 'has-success' : ''}`}
+//             >
+//               <label htmlFor="username" className="col-md-4 col-form-label text-start">
+//                 Username <i className="fas fa-user ml-2"></i>
+//               </label>
+//               <div className="col-md-8">
 //                 <input
 //                   type="text"
 //                   id="username"
-//                   className={`form-control ${errors.username ? 'is-invalid' : ''} ${validInputs.username ? 'is-valid' : ''}`}
+//                   className={`form-control ${errors.username ? 'is-invalid' : ''} ${
+//                     validInputs.username ? 'is-valid' : ''
+//                   }`}
 //                   value={username}
-//                   placeholder='Enter Username'
+//                   placeholder="Enter Username"
 //                   onChange={handleInputChange}
 //                 />
 //                 {errors.username && <div className="invalid-feedback">{errors.username}</div>}
 //               </div>
 //             </div>
-//             <div className={`form-group row my-5 d-flex align-items-center justify-content-center ${errors.password ? 'has-error' : ''} ${validInputs.password ? 'has-success' : ''}`}>
-//               <label htmlFor="password" className=' col-md-4 col-form-label text-start'>Password <i className='fas fa-lock ml-2'></i></label>
-//               <div className='col-md-8'>
+//             <div
+//               className={`form-group row my-5 d-flex align-items-center justify-content-center ${
+//                 errors.password ? 'has-error' : ''
+//               } ${validInputs.password ? 'has-success' : ''}`}
+//             >
+//               <label htmlFor="password" className="col-md-4 col-form-label text-start">
+//                 Password <i className="fas fa-lock ml-2"></i>
+//               </label>
+//               <div className="col-md-8">
 //                 <input
 //                   type="password"
 //                   id="password"
-//                   className={`form-control ${errors.password ? 'is-invalid' : ''} ${validInputs.password ? 'is-valid' : ''}`}
+//                   className={`form-control ${errors.password ? 'is-invalid' : ''} ${
+//                     validInputs.password ? 'is-valid' : ''
+//                   }`}
 //                   value={password}
-//                   placeholder='Enter Password'
+//                   placeholder="Enter Password"
 //                   onChange={handleInputChange}
 //                 />
 //                 {errors.password && <div className="invalid-feedback">{errors.password}</div>}
 //               </div>
 //             </div>
-//             {loginError && <div className="alert alert-danger">Username and password do not match. Please try again.</div>}
+//             {loginError && (
+//               <div className="alert alert-danger">
+//                 Username and password do not match. Please try again.
+//               </div>
+//             )}
 //             <div className="form-group row my-5 d-flex align-items-center justify-content-center text-center">
-//               <button type="submit" className="btn btn-primary">Login</button>
+//               <button type="submit" className="btn btn-primary">
+//                 Login
+//               </button>
 //             </div>
 //           </form>
 //         </div>
@@ -259,4 +284,9 @@ export default LoginPage;
 // };
 
 // export default LoginPage;
+
+
+
+
+
 

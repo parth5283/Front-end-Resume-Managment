@@ -86,7 +86,7 @@ const Navbar = ({ isLoggedIn, handleLogout }) => {
                   Login
                 </NavLink>
               ) : (
-                <button className="nav-link" onClick={handleLogout}>
+                <button className="btn btn-link nav-link text-primary fw-bold" onClick={handleLogout}>
                   Logout
                 </button>
               )}

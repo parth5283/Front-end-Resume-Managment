@@ -17,29 +17,30 @@ import Display from './redux/Display';
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+
+
   const handleLogin = async (username, password) => {
     try {
-      // Send a request to the server to validate the credentials
-      const response = await axios.get('http://localhost:8080/api/v1/employees/get-users', { username, password });
+      // Perform login API request if required
 
-      // Assuming the server response contains a success flag
-      if (response.data.success) {
+      // Hardcoded username and password for temporary login
+      const hardcodedUsername = 'admin';
+      const hardcodedPassword = 'password';
+
+      if (username === hardcodedUsername && password === hardcodedPassword) {
         setIsLoggedIn(true);
       } else {
         setIsLoggedIn(false);
-        // Display an error message to the user
       }
     } catch (error) {
       console.log('Login error:', error);
       setIsLoggedIn(false);
-      // Display an error message to the user
     }
   };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    // Perform any logout logic or actions
-    // For example, clear user data from local storage, reset state, or redirect to the login page
+
   };
 
   return (
