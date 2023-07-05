@@ -96,18 +96,14 @@ const Display = () => {
                         </div>
                         <div className="col-md-6 d-flex align-items-center address-wrapper">
                             <div className="company-address">
-                                <p>
-                                    204, Second Floor,
+                            <p>
+                                    {empaddress},
                                     <br />
-                                    Lulu Cyber Tower I,
+                                    {empzipcode}
                                     <br />
-                                    Infopark,
+                                    {empemail}
                                     <br />
-                                    Kochi- 682 042
-                                    <br />
-                                    info@cabotsolutions.com
-                                    <br />
-                                    +91-484-404-5555
+                                    {empphonenumber}
                                 </p>
                             </div>
                         </div>
