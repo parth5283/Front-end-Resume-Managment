@@ -1,6 +1,5 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-
 import { useSelector } from 'react-redux';
 import { getSkills } from './store';
 import axios from 'axios';
@@ -26,9 +25,7 @@ const Display = () => {
     skills.forEach(skill => {
         console.log("skill", skill.skills);
     });
-    // const handleBack = () => {
-    //     history.push('/emp-skill-certification-form');
-    //   };
+    
     const handleDataSubmit = async () => {
         const employeeData = {
             name: empname,
