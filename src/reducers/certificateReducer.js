@@ -8,7 +8,9 @@
     name: 'certificateReducer',
     initialState,
     reducers: {
-      
+      resetCertificates(state) {
+        state.certificates = [];
+      },
         saveCertificateDetails(state, action) {
         state = action.payload;
       }

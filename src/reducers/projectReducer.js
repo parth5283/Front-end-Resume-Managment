@@ -10,10 +10,11 @@
     reducers: {
       
         saveProjectDetails(state, action) {
-        state = action.payload;
-      }
+          state.projectDetails = action.payload;
+      },
+      clearProjectDetails:(state) => initialState,
     }
   })
-  
-  export const { saveProjectDetails } = projectReducer.actions;
+
+  export const { saveProjectDetails, clearProjectDetails } = projectReducer.actions;
   export default projectReducer.reducer;

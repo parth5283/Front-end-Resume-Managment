@@ -30,6 +30,8 @@ const certificateSlice = createSlice({
      
   },
 });
-
+export const resetCertificates = () => ({
+  type: 'certificate/resetCertificates',
+});
 export const { updateCertificationName,updateCertificationStartDate,updateCertificationEndDate,addSkillsCertificates} = certificateSlice.actions;
 export default certificateSlice.reducer;

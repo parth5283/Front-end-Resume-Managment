@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { NavLink } from 'react-router-dom';
 import logo from "../images/logo.svg";
 
+
 const Navbar = ({ isLoggedIn, handleLogout }) => {
   const [activeNavItem, setActiveNavItem] = useState('home');
 
