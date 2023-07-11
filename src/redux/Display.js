@@ -1,7 +1,8 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-
+import html2pdf from 'html2pdf.js';
 import { useSelector } from 'react-redux';
+import { jsPDF } from 'jspdf';
 import { getSkills } from './store';
 import axios from 'axios';
 import logo from '../images/preview-page-logo.png';
@@ -18,7 +19,7 @@ const Display = () => {
     const certificates = useSelector((state) => state.certificate.certificates);
     const skills = getSkills();
     const location = useLocation();
-    
+    const previewDataDisplayRef = React.createRef();
     
     const { employee } = location.state || {};
     const uniqueSkills = [...new Set(skills.map((skill) => skill.skills))];
@@ -26,10 +27,9 @@ const Display = () => {
     skills.forEach(skill => {
         console.log("skill", skill.skills);
     });
-    // const handleBack = () => {
-    //     history.push('/emp-skill-certification-form');
-    //   };
+  
     const handleDataSubmit = async () => {
+
         const employeeData = {
             name: empname,
             email: empemail,
@@ -40,6 +40,7 @@ const Display = () => {
             profilesummary: empprofileSummary,
 
         };
+      
         const employeeResponse = await axios.post('http://localhost:8080/api/v1/employees/add-employee', employeeData);
 
         const { message, employeeId } = employeeResponse.data;
@@ -84,11 +85,113 @@ const Display = () => {
             .catch((error) => {
                 console.log('An error occurred:', error);
             });
+   const doc = new jsPDF();
+
+    doc.setFontSize(16);
+
+    doc.text('Company Address:', 20, 20);
+    doc.text(`${empaddress}`, 30, 30);
+    doc.text(`${empzipcode}`, 30, 40);
+    doc.text(`${empemail}`, 30, 50);
+    doc.text(`${empphonenumber}`, 30, 60);
+
+    doc.setFontSize(20);
+    doc.text('Employee Name:', 20, 80);
+    doc.text(`${empname}`, 30, 90);
+
+    doc.setFontSize(16);
+    doc.text('Profile Summary:', 20, 110);
+    doc.text(`${empprofileSummary}`, 30, 120);
+
+    doc.setFontSize(16);
+    doc.text('Licences/Certifications (if any):', 20, 140);
+
+    let yPos = 150;
+    certificates.forEach((certificate, index) => {
+      doc.setFontSize(12);
+      doc.text(`Certificate Name: ${certificate.certificate.certificationName}`, 30, yPos);
+      doc.text(`Certificate Validity: ${certificate.certificate.certificationStartDate} to ${certificate.certificate.certificationExpiryDate}`, 30, yPos + 10);
+      yPos += 20;
+    });
+
+    doc.setFontSize(16);
+    doc.text('Technical Skills:', 20, yPos + 20);
+
+    uniqueSkills.forEach((skill, index) => {
+      doc.setFontSize(12);
+      doc.text(skill.join(",   "), 30, yPos + 30);
+      yPos += 10;
+    });
+
+    doc.setFontSize(16);
+    doc.text('Project Summary:', 20, yPos + 50);
+
+    let tableYPos = yPos + 60;
+    projects.forEach((project, index) => {
+      const technologiesUsed = Object.values(project.project.technologiesUsed);
+      const startDate = new Date(project.project.startDate);
+      const endDate = new Date(project.project.endDate);
+      const startMonthYear = startDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+      const endMonthYear = endDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+      doc.setFontSize(12);
+      doc.text(`Project Name: ${project.project.name}`, 30, tableYPos);
+      doc.text(`Timeline: ${startMonthYear} - ${endMonthYear}`, 30, tableYPos + 10);
+      doc.text(`Technologies Used: ${technologiesUsed.join(", ")}`, 30, tableYPos + 20);
+      doc.text(`Roles and Responsibilities: ${project.project.rolesAndResponsibilities}`, 30, tableYPos + 30);
+      doc.text(`Project Description: ${project.project.projectDescription}`, 30, tableYPos + 40);
+      tableYPos += 60;
+    });
+    const pdfData = doc.output('blob');
+    const url = URL.createObjectURL(pdfData);
+
+// Open the PDF in a new window
+window.open(url, '_blank');
+try {
+    const reader = new FileReader();
+reader.readAsDataURL(pdfData);
+reader.onloadend = () => {
+  const base64Data = reader.result.split(',')[1];
+    const payload = {
+      pdfData: base64Data,
+      employeeId: employeeId
+    };
+
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+
+  
+    sendRequest(payload);
+ } } catch (error) {
+    console.error('Error saving PDF:', error);
+  }
+}
+
+const sendRequest = async (payload) => {
+    try {
+      const response = await fetch('http://localhost:8080/api/v1/employees/save-PDFtoDb', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+  
+      if (response.ok) {
+        console.log('PDF saved to database successfully');
+      } else {
+        console.error('Error saving PDF:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error saving PDF:', error);
     }
+  };
+
     return (
         <>
             <div className='container'>
-                <section className='preview-data-display '>
+                <section className='preview-data-display ' ref={previewDataDisplayRef}>
 
                     <div className="row company-description">
                         <div className="col-md-6 d-flex align-items-center justify-content-center logo-wrapper">
@@ -96,18 +199,14 @@ const Display = () => {
                         </div>
                         <div className="col-md-6 d-flex align-items-center address-wrapper">
                             <div className="company-address">
-                                <p>
-                                    204, Second Floor,
+                            <p>
+                                    {empaddress},
                                     <br />
-                                    Lulu Cyber Tower I,
+                                    {empzipcode}
                                     <br />
-                                    Infopark,
+                                    {empemail}
                                     <br />
-                                    Kochi- 682 042
-                                    <br />
-                                    info@cabotsolutions.com
-                                    <br />
-                                    +91-484-404-5555
+                                    {empphonenumber}
                                 </p>
                             </div>
                         </div>

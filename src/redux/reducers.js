@@ -9,6 +9,11 @@ const initialState = {
           ...state,
           employeeDetails: action.payload,
         };
+        case 'CLEAR_EMPLOYEE_DETAILS':
+      return {
+        ...state,
+        employeeDetails: {},
+      };
       default:
         return state;
     }

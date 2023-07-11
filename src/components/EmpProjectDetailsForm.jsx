@@ -5,27 +5,13 @@ import 'react-tagsinput/react-tagsinput.css';
 import TagsInput from 'react-tagsinput';
 import { useSelector, useDispatch } from 'react-redux';
 import {addProject,updateProjectName,updateStartDate,updateEndDate,updateTechnologiesUsed,updateRolesAndResponsbilities,updateProjectDescription  } from '../redux/projectSlice';
-import { saveProjectDetails } from '../reducers/projectReducer';
+
 
 const EmpProjectDetailsForm = () => {
   const projectss = useSelector((state) => state.project.projects);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const { employee,skills,certificates } = location.state || {};
-
-  // const [projects, setProjects] = useState([
-  //   {
-  //     projectName: '',
-  //     startDate: '',
-  //     endDate: '',
-  //     technologiesUsed: [],
-  //     rolesAndResponsibilities: '',
-  //     projectDescription: '',
-  //     errors: {},
-  //   },
-  // ]);
-
 
   const { employee, skills, certificates, previousData } = location.state || {};
 
@@ -108,6 +94,7 @@ const EmpProjectDetailsForm = () => {
   };
 
   const handlePrevious = () => {
+    
   navigate('/', { state: { employee, projects } });
 };
 

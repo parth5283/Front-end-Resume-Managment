@@ -41,35 +41,59 @@ const EmployeeSearchTable = () => {
   };
 
 
-  const handleDownload = async (id) => {
+  const handleDownload = async (employeeId) => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/v1/employees/${id}/pdf`, {
-        responseType: 'blob',
+      const response = await axios.get(`http://localhost:8080/api/v1/employees/resume/${employeeId}`, {
+        responseType: 'text', // Set responseType to 'text' to receive the response as a string
       });
-
-      // Create a temporary URL for the blob data
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-
-      // Create a temporary link element and trigger the download
+    
+      const base64Data = response.data;
+      const binaryData = atob(base64Data); // Decode the Base64 data
+      const arrayBuffer = new ArrayBuffer(binaryData.length);
+      const uint8Array = new Uint8Array(arrayBuffer);
+    
+      for (let i = 0; i < binaryData.length; i++) {
+        uint8Array[i] = binaryData.charCodeAt(i);
+      }
+    
+      const blob = new Blob([uint8Array], { type: 'application/pdf' }); // Create a Blob object with the decoded data
+      const url = URL.createObjectURL(blob); // Create a URL for the Blob object
+    
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `employee_${id}.pdf`);
+      link.setAttribute('download', 'resume.pdf');
+      link.style.display = 'none';
       document.body.appendChild(link);
       link.click();
-
-      // Clean up the temporary URL and link element
-      URL.revokeObjectURL(url);
+    
       document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error downloading PDF:', error);
+      console.error('Error retrieving resume file:', error);
     }
   };
 
 
-
-
-  const handleView = (employeeId) => {
-    window.open(`http://localhost:8080/pdf-generator/${employeeId}`, '_blank');
+  const handleView = async (employeeId) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/v1/employees/resume/${employeeId}`);
+  
+      const base64Data = response.data;
+      const binaryData = atob(base64Data); // Decode the Base64 data
+      const arrayBuffer = new ArrayBuffer(binaryData.length);
+      const uint8Array = new Uint8Array(arrayBuffer);
+  
+      for (let i = 0; i < binaryData.length; i++) {
+        uint8Array[i] = binaryData.charCodeAt(i);
+      }
+  
+      const file = new Blob([uint8Array], { type: 'application/pdf' }); // Create a Blob object with the decoded data
+      const fileURL = URL.createObjectURL(file); // Create a URL for the Blob object
+  
+      window.open(fileURL); // Open the PDF in a new window
+    } catch (error) {
+      console.error('Error retrieving resume file:', error);
+    }
   };
 
   // const filteredEmployees = employees.filter(

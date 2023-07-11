@@ -8,7 +8,9 @@ const skillReducer = createSlice({
   name: 'skillReducer',
   initialState,
   reducers: {
-    
+    reseSkills(state) {
+      state.skills = [];
+    },
       saveSkills(state, action) {
       state = action.payload;
     }

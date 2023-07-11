@@ -12,6 +12,8 @@ const skillSlice = createSlice({
     },
   },
 });
-
+export const resetSkills = () => ({
+  type: 'skill/resetSkills',
+});
 export const { updateSkills } = skillSlice.actions;
 export default skillSlice.reducer;

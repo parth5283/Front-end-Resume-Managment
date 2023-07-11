@@ -6,8 +6,9 @@ import 'react-tagsinput/react-tagsinput.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { addSkillsCertificates,updateCertificationName,updateCertificationStartDate,updateCertificationEndDate } from '../redux/certificateSlice';
 import { updateSkills } from '../redux/skillSlice';
-
-
+import { resetFormData } from '../redux/actions';
+import { clearProjectDetails } from '../reducers/projectReducer';
+import { connect } from 'react-redux';
 const EmpSkillCertificationForm = () => {
   
   const skils = useSelector((state) => state.skill.skills);
@@ -15,7 +16,7 @@ const EmpSkillCertificationForm = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const { employee, projects } = location.state || {};
-
+  const [projectDetails, setProjectDetails] = useState(null);
   const [certificates, setCertifications] = useState([
     {
       certificationName: '',
@@ -113,9 +114,10 @@ const EmpSkillCertificationForm = () => {
    
     return formIsValid;
   };
-
+ 
   const handlePrevious = () => {
     
+  
     navigate('/emp-project-details', { state: { employee, previousData: projects, skills, certificates } });
 
   };
