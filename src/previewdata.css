@@ -10,9 +10,7 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
-  .company-description {
-    margin-bottom: 30px;
-  }
+  
   
   .company-logo {
     max-width: 100%;
@@ -70,9 +68,6 @@
     margin-bottom: 10px;
   }
   
-  .technical-skills-block {
-    margin-bottom: 30px;
-  }
   
   .skills-heading {
     margin-bottom: 10px;
@@ -156,7 +151,7 @@
 
   .company-description {
     height: auto;
-    margin-top: 50px; 
+    padding: 50px;
     border-bottom: 2px solid #59b7df;
   }
   
@@ -179,7 +174,7 @@
   
   .employee-name-block , .profile-summary-wrapper, .Certifications-block, .technical-skills-block, .project-summary-block {
     
-    padding: 20px;
+    padding: 36px;
     border-bottom: 2px solid #59b7df;
   }
   

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import html2pdf from 'html2pdf.js';
 import { useSelector } from 'react-redux';
 import { jsPDF } from 'jspdf';
@@ -19,17 +19,21 @@ const Display = () => {
     const certificates = useSelector((state) => state.certificate.certificates);
     const skills = getSkills();
     const location = useLocation();
+    const navigate = useNavigate();
+    const { state } = location;
     const previewDataDisplayRef = React.createRef();
-    
+
     const { employee } = location.state || {};
     const uniqueSkills = [...new Set(skills.map((skill) => skill.skills))];
     console.log("skills", skills);
     skills.forEach(skill => {
         console.log("skill", skill.skills);
     });
-    // const handleBack = () => {
-    //     history.push('/emp-skill-certification-form');
-    //   };
+
+
+    const handleBack = () => {
+        navigate('/emp-certificates-skills-form', { state: { ...state } });
+    }
     const handleDataSubmit = async () => {
 
         const employeeData = {
@@ -42,7 +46,7 @@ const Display = () => {
             profilesummary: empprofileSummary,
 
         };
-      
+
         const employeeResponse = await axios.post('http://localhost:8080/api/v1/employees/add-employee', employeeData);
 
         const { message, employeeId } = employeeResponse.data;
@@ -87,108 +91,109 @@ const Display = () => {
             .catch((error) => {
                 console.log('An error occurred:', error);
             });
-   const doc = new jsPDF();
+        const doc = new jsPDF();
 
-    doc.setFontSize(16);
+        doc.setFontSize(16);
 
-    doc.text('Company Address:', 20, 20);
-    doc.text(`${empaddress}`, 30, 30);
-    doc.text(`${empzipcode}`, 30, 40);
-    doc.text(`${empemail}`, 30, 50);
-    doc.text(`${empphonenumber}`, 30, 60);
+        doc.text('Company Address:', 20, 20);
+        doc.text(`${empaddress}`, 30, 30);
+        doc.text(`${empzipcode}`, 30, 40);
+        doc.text(`${empemail}`, 30, 50);
+        doc.text(`${empphonenumber}`, 30, 60);
 
-    doc.setFontSize(20);
-    doc.text('Employee Name:', 20, 80);
-    doc.text(`${empname}`, 30, 90);
+        doc.setFontSize(20);
+        doc.text('Employee Name:', 20, 80);
+        doc.text(`${empname}`, 30, 90);
 
-    doc.setFontSize(16);
-    doc.text('Profile Summary:', 20, 110);
-    doc.text(`${empprofileSummary}`, 30, 120);
+        doc.setFontSize(16);
+        doc.text('Profile Summary:', 20, 110);
+        doc.text(`${empprofileSummary}`, 30, 120);
 
-    doc.setFontSize(16);
-    doc.text('Licences/Certifications (if any):', 20, 140);
+        doc.setFontSize(16);
+        doc.text('Licences/Certifications (if any):', 20, 140);
 
-    let yPos = 150;
-    certificates.forEach((certificate, index) => {
-      doc.setFontSize(12);
-      doc.text(`Certificate Name: ${certificate.certificate.certificationName}`, 30, yPos);
-      doc.text(`Certificate Validity: ${certificate.certificate.certificationStartDate} to ${certificate.certificate.certificationExpiryDate}`, 30, yPos + 10);
-      yPos += 20;
-    });
+        let yPos = 150;
+        certificates.forEach((certificate, index) => {
+            doc.setFontSize(12);
+            doc.text(`Certificate Name: ${certificate.certificate.certificationName}`, 30, yPos);
+            doc.text(`Certificate Validity: ${certificate.certificate.certificationStartDate} to ${certificate.certificate.certificationExpiryDate}`, 30, yPos + 10);
+            yPos += 20;
+        });
 
-    doc.setFontSize(16);
-    doc.text('Technical Skills:', 20, yPos + 20);
+        doc.setFontSize(16);
+        doc.text('Technical Skills:', 20, yPos + 20);
 
-    uniqueSkills.forEach((skill, index) => {
-      doc.setFontSize(12);
-      doc.text(skill.join(",   "), 30, yPos + 30);
-      yPos += 10;
-    });
+        uniqueSkills.forEach((skill, index) => {
+            doc.setFontSize(12);
+            doc.text(skill.join(",   "), 30, yPos + 30);
+            yPos += 10;
+        });
 
-    doc.setFontSize(16);
-    doc.text('Project Summary:', 20, yPos + 50);
+        doc.setFontSize(16);
+        doc.text('Project Summary:', 20, yPos + 50);
 
-    let tableYPos = yPos + 60;
-    projects.forEach((project, index) => {
-      const technologiesUsed = Object.values(project.project.technologiesUsed);
-      const startDate = new Date(project.project.startDate);
-      const endDate = new Date(project.project.endDate);
-      const startMonthYear = startDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-      const endMonthYear = endDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+        let tableYPos = yPos + 60;
+        projects.forEach((project, index) => {
+            const technologiesUsed = Object.values(project.project.technologiesUsed);
+            const startDate = new Date(project.project.startDate);
+            const endDate = new Date(project.project.endDate);
+            const startMonthYear = startDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+            const endMonthYear = endDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
-      doc.setFontSize(12);
-      doc.text(`Project Name: ${project.project.name}`, 30, tableYPos);
-      doc.text(`Timeline: ${startMonthYear} - ${endMonthYear}`, 30, tableYPos + 10);
-      doc.text(`Technologies Used: ${technologiesUsed.join(", ")}`, 30, tableYPos + 20);
-      doc.text(`Roles and Responsibilities: ${project.project.rolesAndResponsibilities}`, 30, tableYPos + 30);
-      doc.text(`Project Description: ${project.project.projectDescription}`, 30, tableYPos + 40);
-      tableYPos += 60;
-    });
-    const pdfData = doc.output('blob');
-    const url = URL.createObjectURL(pdfData);
+            doc.setFontSize(12);
+            doc.text(`Project Name: ${project.project.name}`, 30, tableYPos);
+            doc.text(`Timeline: ${startMonthYear} - ${endMonthYear}`, 30, tableYPos + 10);
+            doc.text(`Technologies Used: ${technologiesUsed.join(", ")}`, 30, tableYPos + 20);
+            doc.text(`Roles and Responsibilities: ${project.project.rolesAndResponsibilities}`, 30, tableYPos + 30);
+            doc.text(`Project Description: ${project.project.projectDescription}`, 30, tableYPos + 40);
+            tableYPos += 60;
+        });
+        const pdfData = doc.output('blob');
+        const url = URL.createObjectURL(pdfData);
 
-// Open the PDF in a new window
-window.open(url, '_blank');
-try {
-    const reader = new FileReader();
-reader.readAsDataURL(pdfData);
-reader.onloadend = () => {
-  const base64Data = reader.result.split(',')[1];
-    const payload = {
-      pdfData: base64Data,
-      employeeId: employeeId
-    };
+        // Open the PDF in a new window
+        window.open(url, '_blank');
+        try {
+            const reader = new FileReader();
+            reader.readAsDataURL(pdfData);
+            reader.onloadend = () => {
+                const base64Data = reader.result.split(',')[1];
+                const payload = {
+                    pdfData: base64Data,
+                    employeeId: employeeId
+                };
 
-    const headers = {
-      'Content-Type': 'application/json'
-    };
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
 
-  
-    sendRequest(payload);
- } } catch (error) {
-    console.error('Error saving PDF:', error);
-  }
-}
 
-const sendRequest = async (payload) => {
-    try {
-      const response = await fetch('http://localhost:8080/api/v1/employees/save-PDFtoDb', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-  
-      if (response.ok) {
-        console.log('PDF saved to database successfully');
-      } else {
-        console.error('Error saving PDF:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error saving PDF:', error);
+                sendRequest(payload);
+            }
+        } catch (error) {
+            console.error('Error saving PDF:', error);
+        }
     }
-  };
+
+    const sendRequest = async (payload) => {
+        try {
+            const response = await fetch('http://localhost:8080/api/v1/employees/save-PDFtoDb', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                console.log('PDF saved to database successfully');
+            } else {
+                console.error('Error saving PDF:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error saving PDF:', error);
+        }
+    };
 
     return (
         <>
@@ -201,7 +206,7 @@ const sendRequest = async (payload) => {
                         </div>
                         <div className="col-md-6 d-flex align-items-center address-wrapper">
                             <div className="company-address">
-                            <p>
+                                <p>
                                     {empaddress},
                                     <br />
                                     {empzipcode}
@@ -239,16 +244,16 @@ const sendRequest = async (payload) => {
                             {certificates.map((certificate, index) => {
                                 console.log("certificate", certificate);
                                 return (
-                                    <div key={index}>
+                                    <div key={index} className='row my-2'>
 
-                                        <div className="row">
-                                            <div className="col-md-6">
-                                                <strong>Certificate Name:</strong> {certificate.certificate.certificationName}
-                                            </div>
-                                            <div className="col-md-6">
-                                                <strong>Certificate Validity:</strong> {certificate.certificate.certificationStartDate} to {certificate.certificate.certificationExpiryDate}
-                                            </div>
+                                        {/* <div className="row"> */}
+                                        <div className="col-md-6">
+                                            <strong>Certificate Name:</strong> {certificate.certificate.certificationName}
                                         </div>
+                                        <div className="col-md-6">
+                                            <strong>Certificate Validity:</strong> {certificate.certificate.certificationStartDate} to {certificate.certificate.certificationExpiryDate}
+                                        </div>
+                                        {/* </div> */}
                                     </div>
                                 );
                             })}
@@ -268,7 +273,96 @@ const sendRequest = async (payload) => {
                         </div>
                     </div>
 
+
+
+
                     <div className="row project-summary-block">
+                        <div className="col-md-12 project-summary-heading">
+                            <h4 className="font-weight-bold">Project Summary</h4>
+                        </div>
+                        <div className="row project-details ">
+
+                            {projects.map((project, index) => {
+                                const technologiesUsed = Object.values(project.project.technologiesUsed);
+                                const startDate = new Date(project.project.startDate);
+                                const endDate = new Date(project.project.endDate);
+                                const startMonthYear = startDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+                                const endMonthYear = endDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+                                return (
+                                    <div key={index} className="col-md-12 my-4 project-item">
+                                        <div className='row'>
+                                            <div className='col-md-6'>
+                                                <span className="project-value font-weight-bold">{project.project.name}</span>
+                                            </div>
+                                            <div className='col-md-6 text-end '>
+                                                <span className="project-value">{startMonthYear} - {endMonthYear}</span>
+                                            </div>
+                                        </div>
+
+
+                                        <div className='row '>
+                                            <div className='col-md-12 font-italic'>
+
+                                                <span className="project-value">{technologiesUsed.join(", ")}</span>
+                                            </div>
+                                        </div>
+
+
+                                        <div className='row my-4'>
+                                            <div className='col-md-3'>
+                                                <span className="project-label">Roles and Responsibilities:</span>
+                                            </div>
+
+                                            <div className='col-md-9  '>
+                                                <span className="project-value">{project.project.rolesAndResponsibilities}</span>
+                                            </div>
+
+                                        </div>
+                                        <div className='row my-4'>
+                                            <div className='col-md-3'>
+                                                <span className="project-label">Project Description:</span>
+                                            </div>
+                                            <div className='col-md-9'>
+                                                <span className="project-value">{project.project.projectDescription}</span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+
+
+
+                </section>
+
+                <div className="submit-button-blocks">
+                    <div className="row">
+                        <div className="col-md-6 text-start">
+                            <button className="btn btn-secondary" onClick={handleBack}>Back</button>
+                        </div>
+                        <div className="col-md-6 text-end">
+                            <button className="btn btn-primary" onClick={handleDataSubmit}>Submit</button>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </>
+
+    );
+};
+
+export default Display;
+
+
+
+/* <div className="row project-summary-block">
                         <div className="col-md-12 project-summary-heading">
                             <h4 className="font-weight-bold">Project Summary</h4>
                         </div>
@@ -304,33 +398,4 @@ const sendRequest = async (payload) => {
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-
-
-
-
-                </section>
-
-                <div className="submit-button-blocks">
-                    <div className="row">
-                        <div className="col-md-6 text-start">
-                            {/* <button className="btn btn-secondary" onClick={handleBack}>Back</button> */}
-                        </div>
-                        <div className="col-md-6 text-end">
-                            <button className="btn btn-primary" onClick={handleDataSubmit}>Submit</button>
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
-
-        </>
-
-    );
-};
-
-export default Display;
-
-
-
+                    </div> */

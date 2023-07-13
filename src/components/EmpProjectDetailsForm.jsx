@@ -12,10 +12,10 @@ const EmpProjectDetailsForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const {state}=location;
+  const { employee } = location.state || {};
 
-  const { employee, skills, certificates, previousData } = location.state || {};
-
-  const [projects, setProjects] = useState(previousData || [
+  const [projects, setProjects] = useState(state?.projects || [
     {
       projectName: '',
       startDate: '',
@@ -27,11 +27,29 @@ const EmpProjectDetailsForm = () => {
     },
   ]);
 
+
   useEffect(() => {
-    if (previousData) {
-      setProjects(previousData);
+    const storedProjects = sessionStorage.getItem('projects');
+    if (storedProjects) {
+      setProjects(JSON.parse(storedProjects));
+    } else {
+      setProjects(state?.projects || [
+        {
+          projectName: '',
+          startDate: '',
+          endDate: '',
+          technologiesUsed: [],
+          rolesAndResponsibilities: '',
+          projectDescription: '',
+          errors: {},
+        },
+      ]);
     }
-  }, [previousData]);
+  }, [state]);
+
+  useEffect(() => {
+    sessionStorage.setItem('projects', JSON.stringify(projects));
+  }, [projects]);
 
   
 
@@ -95,7 +113,7 @@ const EmpProjectDetailsForm = () => {
 
   const handlePrevious = () => {
     
-  navigate('/', { state: { employee, projects } });
+  navigate('/', { state: { ...state,employee } });
 };
 
   
@@ -114,7 +132,7 @@ const EmpProjectDetailsForm = () => {
     console.log("Projects",projects)
     
      //console.log("projectReducer",projectss);
-      navigate('/emp-certificates-skills-form', { state: { employee, projects,skills,certificates } });
+      navigate('/emp-certificates-skills-form', { state: { ...state,projects } });
     }
   };
 

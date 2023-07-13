@@ -15,9 +15,10 @@ const EmpSkillCertificationForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
+  const {state}=location;
   const { employee, projects } = location.state || {};
-  const [projectDetails, setProjectDetails] = useState(null);
-  const [certificates, setCertifications] = useState([
+  
+  const [certificates, setCertifications] = useState(state?.certificates ||[
     {
       certificationName: '',
       certificationStartDate: '',
@@ -26,7 +27,7 @@ const EmpSkillCertificationForm = () => {
     },
   ]);
 
-  const [skills, setSkills] = useState([]);
+  const [skills, setSkills] = useState(state?.skills||[]);
 
   const handleCertificationChange = (index, e) => {
     const { name, value } = e.target;
@@ -67,7 +68,7 @@ const EmpSkillCertificationForm = () => {
       console.log("certificates",certificates);
       console.log("skills",skills);
       console.log("skils",skils)
-      navigate('/display', {state: { skills: skills, certificates:certificates }}); 
+      navigate('/display', {state: { ...state,skills,certificates }}); 
       //console.log( 'data',{state: { employee: skills, certifications }});
       // Perform form submission or any other desired action
     }
@@ -118,7 +119,7 @@ const EmpSkillCertificationForm = () => {
   const handlePrevious = () => {
     
   
-    navigate('/emp-project-details', { state: { employee, previousData: projects, skills, certificates } });
+    navigate('/emp-project-details', { state: { ...state,projects } });
 
   };
 
