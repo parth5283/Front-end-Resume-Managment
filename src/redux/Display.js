@@ -91,90 +91,39 @@ const Display = () => {
             .catch((error) => {
                 console.log('An error occurred:', error);
             });
-        const doc = new jsPDF();
-
-        doc.setFontSize(16);
-
-        doc.text('Company Address:', 20, 20);
-        doc.text(`${empaddress}`, 30, 30);
-        doc.text(`${empzipcode}`, 30, 40);
-        doc.text(`${empemail}`, 30, 50);
-        doc.text(`${empphonenumber}`, 30, 60);
-
-        doc.setFontSize(20);
-        doc.text('Employee Name:', 20, 80);
-        doc.text(`${empname}`, 30, 90);
-
-        doc.setFontSize(16);
-        doc.text('Profile Summary:', 20, 110);
-        doc.text(`${empprofileSummary}`, 30, 120);
-
-        doc.setFontSize(16);
-        doc.text('Licences/Certifications (if any):', 20, 140);
-
-        let yPos = 150;
-        certificates.forEach((certificate, index) => {
-            doc.setFontSize(12);
-            doc.text(`Certificate Name: ${certificate.certificate.certificationName}`, 30, yPos);
-            doc.text(`Certificate Validity: ${certificate.certificate.certificationStartDate} to ${certificate.certificate.certificationExpiryDate}`, 30, yPos + 10);
-            yPos += 20;
-        });
-
-        doc.setFontSize(16);
-        doc.text('Technical Skills:', 20, yPos + 20);
-
-        uniqueSkills.forEach((skill, index) => {
-            doc.setFontSize(12);
-            doc.text(skill.join(",   "), 30, yPos + 30);
-            yPos += 10;
-        });
-
-        doc.setFontSize(16);
-        doc.text('Project Summary:', 20, yPos + 50);
-
-        let tableYPos = yPos + 60;
-        projects.forEach((project, index) => {
-            const technologiesUsed = Object.values(project.project.technologiesUsed);
-            const startDate = new Date(project.project.startDate);
-            const endDate = new Date(project.project.endDate);
-            const startMonthYear = startDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-            const endMonthYear = endDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-
-            doc.setFontSize(12);
-            doc.text(`Project Name: ${project.project.name}`, 30, tableYPos);
-            doc.text(`Timeline: ${startMonthYear} - ${endMonthYear}`, 30, tableYPos + 10);
-            doc.text(`Technologies Used: ${technologiesUsed.join(", ")}`, 30, tableYPos + 20);
-            doc.text(`Roles and Responsibilities: ${project.project.rolesAndResponsibilities}`, 30, tableYPos + 30);
-            doc.text(`Project Description: ${project.project.projectDescription}`, 30, tableYPos + 40);
-            tableYPos += 60;
-        });
-        const pdfData = doc.output('blob');
-        const url = URL.createObjectURL(pdfData);
-
-        // Open the PDF in a new window
-        window.open(url, '_blank');
-        try {
-            const reader = new FileReader();
-            reader.readAsDataURL(pdfData);
-            reader.onloadend = () => {
-                const base64Data = reader.result.split(',')[1];
-                const payload = {
-                    pdfData: base64Data,
-                    employeeId: employeeId
-                };
-
-                const headers = {
-                    'Content-Type': 'application/json'
-                };
-
-
-                sendRequest(payload);
-            }
-        } catch (error) {
+            const previewDataDisplay = previewDataDisplayRef.current;
+      
+        const opt = {
+          margin: [30,30, 30,30],
+          filename: 'preview-data.pdf',
+          image: { type: 'jpeg', quality: 1 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'pt', format: 'letter', orientation: 'portrait' },
+        };
+      
+        html2pdf()
+          .set(opt)
+          .from(previewDataDisplay)
+          .toPdf()
+          .get('pdf')
+          .then((pdf) => {
+            const base64Data = pdf.output('datauristring').split(',')[1];
+            const pdfWindow = window.open('', '_blank');
+            pdfWindow.document.write('<html><head><title>Preview Data</title></head><body><embed width="100%" height="100%" src="data:application/pdf;base64,' + base64Data + '" type="application/pdf" /></body></html>');
+            console.log(base64Data);
+            const payload = {
+                pdfData: base64Data,
+                employeeId: employeeId,
+              };
+                      sendRequest(payload);
+          })
+          .catch((error) => {
             console.error('Error saving PDF:', error);
-        }
-    }
+          });
 
+     }
+ 
+      
     const sendRequest = async (payload) => {
         try {
             const response = await fetch('http://localhost:8080/api/v1/employees/save-PDFtoDb', {
