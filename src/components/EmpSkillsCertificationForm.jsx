@@ -118,7 +118,7 @@ const EmpSkillCertificationForm = () => {
  
   const handlePrevious = () => {
     
-  
+    dispatch(clearProjectDetails());
     navigate('/emp-project-details', { state: { ...state,projects } });
 
   };

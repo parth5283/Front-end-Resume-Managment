@@ -12,7 +12,7 @@
         saveProjectDetails(state, action) {
           state.projectDetails = action.payload;
       },
-      clearProjectDetails:(state) => initialState,
+      clearProjectDetails:() => initialState,
     }
   })
 
