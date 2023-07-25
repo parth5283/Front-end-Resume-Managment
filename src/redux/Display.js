@@ -91,35 +91,33 @@ const Display = () => {
             .catch((error) => {
                 console.log('An error occurred:', error);
             });
-            const previewDataDisplay = previewDataDisplayRef.current;
-      
-        const opt = {
-          margin: [30,30, 30,30],
-          filename: 'preview-data.pdf',
-          image: { type: 'jpeg', quality: 1 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: 'pt', format: 'letter', orientation: 'portrait' },
-        };
-      
-        html2pdf()
-          .set(opt)
-          .from(previewDataDisplay)
-          .toPdf()
-          .get('pdf')
-          .then((pdf) => {
-            const base64Data = pdf.output('datauristring').split(',')[1];
-            const pdfWindow = window.open('', '_blank');
-            pdfWindow.document.write('<html><head><title>Preview Data</title></head><body><embed width="100%" height="100%" src="data:application/pdf;base64,' + base64Data + '" type="application/pdf" /></body></html>');
-            console.log(base64Data);
-            const payload = {
-                pdfData: base64Data,
-                employeeId: employeeId,
-              };
-                      sendRequest(payload);
-          })
-          .catch((error) => {
-            console.error('Error saving PDF:', error);
-          });
+            try {
+                const pdfElement = previewDataDisplayRef.current;
+               const  employeeId= employeeResponse.data.employeeId;
+               console.log("employeeId :",employeeId)
+                const opt = {
+                  filename: 'resume.pdf',
+                  jsPDF: { unit: 'mm', format: [150, 200], orientation: 'potrait' },
+                };
+                const pdf = new html2pdf().from(pdfElement).set(opt);
+                const pdfBlob = await pdf.output('blob'); // Convert PDF to Blob
+                const formData = new FormData();
+                formData.append('employeeId', employeeId);
+                formData.append('pdfData', pdfBlob);
+                
+          
+                // Make a POST request to your backend endpoint to save the PDF to the database
+                await axios.post('http://localhost:8080/api/v1/employees/save-PDFtoDb', formData, {
+                  headers: {
+                    'Content-Type': 'multipart/form-data', // Set the appropriate content type
+                  },
+                });
+                console.log("formData",formData);
+                console.log('PDF saved to the database successfully.');
+              } catch (error) {
+                console.error('Error saving PDF to the database:', error);
+              }
+
 
      }
  
