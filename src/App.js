@@ -21,15 +21,17 @@ const App = () => {
 
   const handleLogin = async (username, password) => {
     try {
-      // Perform login API request if required
-
-      // Hardcoded username and password for temporary login
-      const hardcodedUsername = 'admin';
-      const hardcodedPassword = 'password';
-
-      if (username === hardcodedUsername && password === hardcodedPassword) {
+       // Send the login request to the backend
+       const response = await axios.post('http://localhost:8080/login', {
+        username: username,
+        password: password,
+      });
+      // Handle the response based on the message property
+      if (response.data.message === 'Login successful') {
+        // Login successful
         setIsLoggedIn(true);
       } else {
+        // Login failed
         setIsLoggedIn(false);
       }
     } catch (error) {
