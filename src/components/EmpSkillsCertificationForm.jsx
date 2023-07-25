@@ -54,7 +54,7 @@ const EmpSkillCertificationForm = () => {
     setCertifications(updatedCertifications);
   };
 
-  const handleSubmit = () => {
+  const handlePreview = () => {
     if (validateForm()) {
       certificates.forEach((certificate, index) => {
         dispatch(updateCertificationName({ index, name: certificate.certificationName }));
@@ -249,8 +249,8 @@ const EmpSkillCertificationForm = () => {
                   <button type='button' className='btn btn-secondary' onClick={handlePrevious}>
                     <FaChevronLeft /> Previous
                   </button>
-                  <button type='button' className='btn btn-primary' onClick={handleSubmit}>
-                    Submit
+                  <button type='button' className='btn btn-primary' onClick={handlePreview}>
+                    Preview
                   </button>
                 </div>
               </div>

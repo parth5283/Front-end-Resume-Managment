@@ -167,6 +167,7 @@ const Display = () => {
                             </div>
                         </div>
                     </div>
+                    <hr className='horizontal-break'/>
 
                     <div className='row employee-name-block'>
 
@@ -174,6 +175,7 @@ const Display = () => {
                             <h2 className='font-weight-bold employee-name'>{empname}</h2>
                         </div>
                     </div>
+                    <hr className='horizontal-break'/>
                     <div className='row profile-summary-wrapper'>
                         <div className='col-md-12 summary-heading text-start'>
                             <h4 className='font-weight-bold'>Profile Summary</h4>
@@ -184,6 +186,7 @@ const Display = () => {
                             </p>
                         </div>
                     </div>
+                    <hr className='horizontal-break'/>
 
                     <div className="row Certifications-block">
                         <div className="col-md-12 certifications-heading-block">
@@ -208,6 +211,7 @@ const Display = () => {
                             })}
                         </div>
                     </div>
+                    <hr className='horizontal-break'/>
 
                     <div className="row technical-skills-block">
                         <div className="col-md-12 skills-heading text-start">
@@ -221,6 +225,7 @@ const Display = () => {
                             ))}
                         </div>
                     </div>
+                    <hr className='horizontal-break'/>
 
 
 
@@ -239,7 +244,7 @@ const Display = () => {
                                 const endMonthYear = endDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
                                 return (
-                                    <div key={index} className="col-md-12 my-4 project-item">
+                                    <div key={index} className="col-md-12 my-2 project-item">
                                         <div className='row'>
                                             <div className='col-md-6'>
                                                 <span className="project-value font-weight-bold">{project.project.name}</span>
@@ -258,21 +263,21 @@ const Display = () => {
                                         </div>
 
 
-                                        <div className='row my-4'>
+                                        <div className='row my-3'>
                                             <div className='col-md-3'>
                                                 <span className="project-label">Roles and Responsibilities:</span>
                                             </div>
 
-                                            <div className='col-md-9  '>
+                                            <div className='col-md-9  text-justify'>
                                                 <span className="project-value">{project.project.rolesAndResponsibilities}</span>
                                             </div>
 
                                         </div>
-                                        <div className='row my-4'>
+                                        <div className='row my-3'>
                                             <div className='col-md-3'>
                                                 <span className="project-label">Project Description:</span>
                                             </div>
-                                            <div className='col-md-9'>
+                                            <div className='col-md-9 text-justify'>
                                                 <span className="project-value">{project.project.projectDescription}</span>
                                             </div>
 
@@ -282,6 +287,7 @@ const Display = () => {
                             })}
                         </div>
                     </div>
+                    <hr className='horizontal-break'/>
 
 
 

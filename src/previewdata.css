@@ -2,9 +2,17 @@
     margin: 20px auto;
    
   }
+
+  .horizontal-break{
+    border: 1px solid #59b7df;
+    height: fit-content;
+    width: auto;
+    margin-top:0.5rem ;
+    margin-bottom: 0.5rem;
+  }
   
   .preview-data-display {
-    padding: 70px;
+    padding: 30px;
     background-color: #f8f8f8;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -23,29 +31,24 @@
     margin-bottom: 0;
   }
   
-  .employee-name-block {
-    margin-bottom: 30px;
-  }
   
-  .employee-name-wrapper {
-    margin-top: 20px;
-  }
+  
+  
   
   .employee-name {
     font-size: 24px;
     color: #59b7df;
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin-bottom: 20px;
+    margin: 12px;
+    padding: 0;
   }
   
   
-  .profile-summary-block {
-    margin-bottom: 30px;
-  }
+  
   
   .summary-heading {
-    margin-bottom: 10px;
+    margin:10px  0px 10px 0;
     color: #59b7df;
 }
   
@@ -55,52 +58,44 @@
     color: #555;
   }
   
-  .certifications-block {
-    margin-bottom: 30px;
-  }
+  
   
   .certifications-heading-block {
-    margin-bottom: 10px;
+    margin:10px  0px 10px 0;
     color:#59b7df;
   }
   
-  .certification {
-    margin-bottom: 10px;
-  }
   
   
   .skills-heading {
-    margin-bottom: 10px;
+    margin:10px  0px 10px 0;
     color: #59b7df;
   }
   
   .skills-details {
-    font-size: 16px;
-    color: #555;
+    font-size: 18px;
+    padding: 6px 0 6px 0;
+    
   }
   
   .skills {
     display: inline-block;
-    padding: 5px 10px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    background-color: #f1f1f1;
+    /* background-color: #f1f1f1; */
     color: #555;
     border-radius: 4px;
   }
   
-  .project-summary-block {
-    margin-bottom: 30px;
-  }
+  
   
   .project-summary-heading {
-    margin-bottom: 10px;
+    margin:10px  0px 10px 0;
     color: #59b7df;
   }
   
   .project-details {
     font-size: 16px;
     color: #555;
+    padding: 0 18px 0 18px;
   }
   
   .table-bordered {
@@ -149,11 +144,6 @@
   
 
 
-  .company-description {
-    height: auto;
-    padding: 50px;
-    border-bottom: 2px solid #59b7df;
-  }
   
   .logo-wrapper,
   .address-wrapper {
@@ -163,7 +153,7 @@
   }
   
   .logo-wrapper img {
-    width: 300px;
+    width: 150px;
     height: auto;
     object-fit: contain;
   }
@@ -171,10 +161,3 @@
   .company-address {
     margin-right: 26px;
   }
-  
-  .employee-name-block , .profile-summary-wrapper, .Certifications-block, .technical-skills-block, .project-summary-block {
-    
-    padding: 36px;
-    border-bottom: 2px solid #59b7df;
-  }
-  
