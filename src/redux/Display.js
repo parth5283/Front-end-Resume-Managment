@@ -93,14 +93,34 @@ const Display = () => {
             });
             try {
                 const pdfElement = previewDataDisplayRef.current;
+                const clonedPdfElement = pdfElement.cloneNode(true);
                const  employeeId= employeeResponse.data.employeeId;
-               console.log("employeeId :",employeeId)
+               const empname = employeeResponse.data.empname;
+               const footerDiv = document.createElement('div');
+               footerDiv.style.textAlign = 'center';
+               footerDiv.style.fontSize = '10px';
+               footerDiv.innerText = 'Footer Text - Page {pageNumber}';
+               clonedPdfElement.appendChild(footerDiv);
+               clonedPdfElement.style.height = 'auto';
+               console.log("empname :",empname)
                 const opt = {
                   filename: 'resume.pdf',
-                  jsPDF: { unit: 'mm', format: [150, 200], orientation: 'potrait' },
+                  jsPDF: { unit: 'mm', format:'a4', orientation: 'portrait' },
+                   html2canvas: { scale: 2 },
+                   html2pdf: {
+                    margin: [0, 20,0, 30], // [left, top, right, bottom]
+                    onAfterPageCreate: function (pdf, pageNumber) {
+                      const totalPages = pdf.internal.getNumberOfPages();
+                      const footerContent = footerDiv.cloneNode(true);
+                      footerContent.innerHTML = footerContent.innerHTML.replace('{pageNumber}', pageNumber + ' of ' + totalPages);
+                      pdf.addPage();
+                      pdf.setPage(pageNumber + 1);
+                      pdf.addImage(footerContent, 'center', 290, 100);
+                    },
+                  },
                 };
-                const pdf = new html2pdf().from(pdfElement).set(opt);
-                const pdfBlob = await pdf.output('blob'); // Convert PDF to Blob
+                const pdf = new html2pdf().from(clonedPdfElement).set(opt);
+                const pdfBlob = await pdf.output('blob'); // Convert PDF to Blob    
                 const formData = new FormData();
                 formData.append('employeeId', employeeId);
                 formData.append('pdfData', pdfBlob);
@@ -114,6 +134,7 @@ const Display = () => {
                 });
                 console.log("formData",formData);
                 console.log('PDF saved to the database successfully.');
+                
               } catch (error) {
                 console.error('Error saving PDF to the database:', error);
               }
