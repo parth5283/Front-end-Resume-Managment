@@ -13,6 +13,8 @@ const EmployeeSearchTable = () => {
       try {
         const response = await axios.get('http://localhost:8080/api/v1/employees');
         setEmployees(response.data);
+       
+       
       } catch (error) {
         console.error('Error fetching employees:', error);
       }
@@ -43,6 +45,7 @@ const EmployeeSearchTable = () => {
 
 
   const handleDownload = async (employeeid) => {
+
     axios.get(`http://localhost:8080/api/v1/employees/resume/${employeeid}`, {
       responseType: 'blob'  // This is important to handle binary data
   })
@@ -52,8 +55,8 @@ const EmployeeSearchTable = () => {
       const base64Data = reader.result.split(',')[1];
       //setPdfData(base64Data);
       const decode = atob(base64Data);
-      console.log("decode",decode);
-
+      //console.log("decode",decode);
+      
          // Create a Blob from the decoded data
          // Create a Blob from the base64 decoded data
   const byteArray = new Uint8Array(atob(decode).split('').map((char) => char.charCodeAt(0)));
@@ -63,9 +66,20 @@ const EmployeeSearchTable = () => {
   const url = URL.createObjectURL(blob);
   const tempAnchor = document.createElement('a');
   tempAnchor.href = url;
-  tempAnchor.setAttribute('download', 'your-file-name.pdf'); // Set the desired file name
-  tempAnchor.click();
-
+  const emps = employees;
+  const employee = emps.find((emp) => emp.employeeid === employeeid);
+  console.log(employee)
+  if (employee) {
+    const { name } = employee;
+    // Now you have the employee name based on the employeeid, you can use it for further processing
+    console.log("Employee Name:", name);
+    tempAnchor.setAttribute('download', `${name}-resume.pdf`); // Set the desired file name
+    tempAnchor.click();
+  
+  } else {
+    console.log("Employee not found with the given employeeid:", employeeid);
+  }
+  
   // Clean up the URL and the anchor element
   URL.revokeObjectURL(url);
     };

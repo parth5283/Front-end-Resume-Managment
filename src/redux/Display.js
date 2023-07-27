@@ -48,10 +48,11 @@ const Display = () => {
         };
 
         const employeeResponse = await axios.post('http://localhost:8080/api/v1/employees/add-employee', employeeData);
-
-        const { message, employeeId } = employeeResponse.data;
+        console.log("employeeResponse", employeeResponse);
+        const { message, employeeId,name } = employeeResponse.data;
         console.log("message", message);
         console.log("employeeId", employeeId);
+        
         // Submit project data
         const projectData = projects.map((project) => ({
             employeeId: employeeResponse.data.employeeId,
@@ -95,7 +96,7 @@ const Display = () => {
                 const pdfElement = previewDataDisplayRef.current;
                 const clonedPdfElement = pdfElement.cloneNode(true);
                const  employeeId= employeeResponse.data.employeeId;
-               const empname = employeeResponse.data.empname;
+               const empname = employeeResponse.data.name;
                const footerDiv = document.createElement('div');
                footerDiv.style.textAlign = 'center';
                footerDiv.style.fontSize = '10px';
@@ -104,7 +105,7 @@ const Display = () => {
                clonedPdfElement.style.height = 'auto';
                console.log("empname :",empname)
                 const opt = {
-                  filename: 'resume.pdf',
+                  filename: `${empname}-resume.pdf`,
                   jsPDF: { unit: 'mm', format:'a4', orientation: 'portrait' },
                    html2canvas: { scale: 2 },
                    html2pdf: {
