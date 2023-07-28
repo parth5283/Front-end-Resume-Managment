@@ -49,10 +49,10 @@ const Display = () => {
 
         const employeeResponse = await axios.post('http://localhost:8080/api/v1/employees/add-employee', employeeData);
         console.log("employeeResponse", employeeResponse);
-        const { message, employeeId,name } = employeeResponse.data;
+        const { message, employeeId, name } = employeeResponse.data;
         console.log("message", message);
         console.log("employeeId", employeeId);
-        
+
         // Submit project data
         const projectData = projects.map((project) => ({
             employeeId: employeeResponse.data.employeeId,
@@ -95,55 +95,55 @@ const Display = () => {
             try {
                 const pdfElement = previewDataDisplayRef.current;
                 const clonedPdfElement = pdfElement.cloneNode(true);
-               const  employeeId= employeeResponse.data.employeeId;
-               const empname = employeeResponse.data.name;
-               const footerDiv = document.createElement('div');
-               footerDiv.style.textAlign = 'center';
-               footerDiv.style.fontSize = '10px';
-               footerDiv.innerText = 'Footer Text - Page {pageNumber}';
-               clonedPdfElement.appendChild(footerDiv);
-               clonedPdfElement.style.height = 'auto';
-               console.log("empname :",empname)
+                const employeeId = employeeResponse.data.employeeId;
+                const empname = employeeResponse.data.name;
+                const footerDiv = document.createElement('div');
+                footerDiv.style.textAlign = 'center';
+                footerDiv.style.fontSize = '10px';
+                footerDiv.innerText = 'Footer Text - Page {pageNumber}';
+                clonedPdfElement.appendChild(footerDiv);
+                clonedPdfElement.style.height = 'auto';
+                console.log("empname :", empname)
                 const opt = {
-                  filename: `${empname}-resume.pdf`,
-                  jsPDF: { unit: 'mm', format:'a4', orientation: 'portrait' },
-                   html2canvas: { scale: 2 },
-                   html2pdf: {
-                    margin: [0, 20,0, 30], // [left, top, right, bottom]
-                    onAfterPageCreate: function (pdf, pageNumber) {
-                      const totalPages = pdf.internal.getNumberOfPages();
-                      const footerContent = footerDiv.cloneNode(true);
-                      footerContent.innerHTML = footerContent.innerHTML.replace('{pageNumber}', pageNumber + ' of ' + totalPages);
-                      pdf.addPage();
-                      pdf.setPage(pageNumber + 1);
-                      pdf.addImage(footerContent, 'center', 290, 100);
+                    filename: `${empname}-resume.pdf`,
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                    html2canvas: { scale: 2 },
+                    html2pdf: {
+                        margin: [0, 20, 0, 30], // [left, top, right, bottom]
+                        onAfterPageCreate: function (pdf, pageNumber) {
+                            const totalPages = pdf.internal.getNumberOfPages();
+                            const footerContent = footerDiv.cloneNode(true);
+                            footerContent.innerHTML = footerContent.innerHTML.replace('{pageNumber}', pageNumber + ' of ' + totalPages);
+                            pdf.addPage();
+                            pdf.setPage(pageNumber + 1);
+                            pdf.addImage(footerContent, 'center', 290, 100);
+                        },
                     },
-                  },
                 };
                 const pdf = new html2pdf().from(clonedPdfElement).set(opt);
                 const pdfBlob = await pdf.output('blob'); // Convert PDF to Blob    
                 const formData = new FormData();
                 formData.append('employeeId', employeeId);
                 formData.append('pdfData', pdfBlob);
-                
-          
+    
+    
                 // Make a POST request to your backend endpoint to save the PDF to the database
                 await axios.post('http://localhost:8080/api/v1/employees/save-PDFtoDb', formData, {
-                  headers: {
-                    'Content-Type': 'multipart/form-data', // Set the appropriate content type
-                  },
+                    headers: {
+                        'Content-Type': 'multipart/form-data', // Set the appropriate content type
+                    },
                 });
-                console.log("formData",formData);
+                console.log("formData", formData);
                 console.log('PDF saved to the database successfully.');
-                
-              } catch (error) {
+    
+            } catch (error) {
                 console.error('Error saving PDF to the database:', error);
-              }
+            }
 
 
-     }
- 
-      
+    }
+
+
     const sendRequest = async (payload) => {
         try {
             const response = await fetch('http://localhost:8080/api/v1/employees/save-PDFtoDb', {
@@ -169,25 +169,24 @@ const Display = () => {
             <div className='container'>
                 <section className='preview-data-display ' ref={previewDataDisplayRef}>
 
-                    <div className="row company-description">
+                    <div className="row company-description mb-4">
                         <div className="col-md-6 d-flex align-items-center justify-content-center logo-wrapper">
                             <img src={logo} alt="cabot-logo" />
                         </div>
                         <div className="col-md-6 d-flex align-items-center address-wrapper">
                             <div className="company-address">
-                                <p>
-                                    {empaddress},
-                                    <br />
-                                    {empzipcode}
-                                    <br />
-                                    {empemail}
-                                    <br />
-                                    {empphonenumber}
-                                </p>
+                                <div className='text-right'>
+                                    204, Second Floor,<br />
+                                    Lulu Cyber Tower I,<br />
+                                    Infopark,<br />
+                                    Kochi- 682 042<br />
+                                    info@cabotsolutions.com<br />
+                                    +91-484-404-5555<br />
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <hr className='horizontal-break'/>
+                    <hr className='horizontal-break' />
 
                     <div className='row employee-name-block'>
 
@@ -195,7 +194,7 @@ const Display = () => {
                             <h2 className='font-weight-bold employee-name'>{empname}</h2>
                         </div>
                     </div>
-                    <hr className='horizontal-break'/>
+                    <hr className='horizontal-break' />
                     <div className='row profile-summary-wrapper'>
                         <div className='col-md-12 summary-heading text-start'>
                             <h4 className='font-weight-bold'>Profile Summary</h4>
@@ -206,11 +205,11 @@ const Display = () => {
                             </p>
                         </div>
                     </div>
-                    <hr className='horizontal-break'/>
+                    <hr className='horizontal-break' />
 
                     <div className="row Certifications-block">
                         <div className="col-md-12 certifications-heading-block">
-                            <h4 className="font-weight-bold">Licences/Certifications (if any)</h4>
+                            <h4 className="font-weight-bold">Licences/Certifications</h4>
                         </div>
                         <div className="col-md-12 certification-details">
                             {certificates.map((certificate, index) => {
@@ -231,26 +230,46 @@ const Display = () => {
                             })}
                         </div>
                     </div>
-                    <hr className='horizontal-break'/>
+                    <hr className='horizontal-break' />
 
                     <div className="row technical-skills-block">
                         <div className="col-md-12 skills-heading text-start">
                             <h4 className="font-weight-bold">Technical Skills</h4>
                         </div>
-                        <div className="col-md-12 skills-details">
+
+                        {/* <div className="col-md-12 skills-details">
+
+                            {uniqueSkills.map((skillGroup, index) => (
+
+                                <ul key={index} >
+                                    {skillGroup.map((skill, skillIndex) => (
+                                        <li key={skillIndex} className="skills">
+                                            {skill}
+                                        </li>
+                                    ))}
+                                </ul>
+
+                            ))}
+
+                        </div> */}
+
+<div className="col-md-12 skills-details">
                             {uniqueSkills.map((skill, index) => (
                                 <span key={index} className="skills">
                                     {skill.join(",   ")}
                                 </span>
                             ))}
                         </div>
+
                     </div>
-                    <hr className='horizontal-break'/>
 
 
 
 
-                    <div className="row project-summary-block">
+
+                    <hr className='horizontal-break' />
+
+                    <div className="row project-summary-block page-break-before">
                         <div className="col-md-12 project-summary-heading">
                             <h4 className="font-weight-bold">Project Summary</h4>
                         </div>
@@ -267,38 +286,42 @@ const Display = () => {
                                     <div key={index} className="col-md-12 my-2 project-item">
                                         <div className='row'>
                                             <div className='col-md-6'>
-                                                <span className="project-value font-weight-bold">{project.project.name}</span>
+                                                <span className="project-name-label font-weight-bold">{project.project.name}</span>
                                             </div>
                                             <div className='col-md-6 text-end '>
-                                                <span className="project-value">{startMonthYear} - {endMonthYear}</span>
+                                                <span className="project-name-value">{startMonthYear} - {endMonthYear}</span>
                                             </div>
                                         </div>
 
 
-                                        <div className='row '>
-                                            <div className='col-md-12 font-italic'>
+                                        <div className='row my-3 '>
 
-                                                <span className="project-value">{technologiesUsed.join(", ")}</span>
+                                        <div className='col-md-3'>
+                                                <span className="project-technologies-label">Technologies Used:</span>
+                                            </div>
+                                            <div className='col-md-9'>
+
+                                                <span className="project-technologies-value">{technologiesUsed.join(", ")}</span>
                                             </div>
                                         </div>
 
 
                                         <div className='row my-3'>
                                             <div className='col-md-3'>
-                                                <span className="project-label">Roles and Responsibilities:</span>
+                                                <span className="project-roles-label">Roles and Responsibilities:</span>
                                             </div>
 
                                             <div className='col-md-9  text-justify'>
-                                                <span className="project-value">{project.project.rolesAndResponsibilities}</span>
+                                                <span className="project-roles-value">{project.project.rolesAndResponsibilities}</span>
                                             </div>
 
                                         </div>
                                         <div className='row my-3'>
                                             <div className='col-md-3'>
-                                                <span className="project-label">Project Description:</span>
+                                                <span className="project-description-label">Project Description:</span>
                                             </div>
                                             <div className='col-md-9 text-justify'>
-                                                <span className="project-value">{project.project.projectDescription}</span>
+                                                <span className="project-description-value">{project.project.projectDescription}</span>
                                             </div>
 
                                         </div>
@@ -307,7 +330,13 @@ const Display = () => {
                             })}
                         </div>
                     </div>
-                    <hr className='horizontal-break'/>
+
+
+
+                   
+
+
+                    <hr className='horizontal-break' />
 
 
 
@@ -335,42 +364,3 @@ const Display = () => {
 
 export default Display;
 
-
-
-/* <div className="row project-summary-block">
-                        <div className="col-md-12 project-summary-heading">
-                            <h4 className="font-weight-bold">Project Summary</h4>
-                        </div>
-                        <div className="col-md-12 project-details">
-                            <table className="table table-bordered table-collapse">
-                                <tbody>
-                                    {projects.map((project, index) => {
-                                        const technologiesUsed = Object.values(project.project.technologiesUsed);
-                                        const startDate = new Date(project.project.startDate);
-                                        const endDate = new Date(project.project.endDate);
-                                        const startMonthYear = startDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-                                        const endMonthYear = endDate.toLocaleString('default', { month: 'long', year: 'numeric' });
-
-                                        return (
-                                            <><tr key={index}>
-                                                <th className="col-4" style={{ border: '1px solid #000' }}>Project Name:</th>
-                                                <td className="col-8" style={{ border: '1px solid #000' }}>{project.project.name}</td>
-                                            </tr><tr>
-                                                    <th className="col-4" style={{ border: '1px solid #000' }}>Timeline:</th>
-                                                    <td className="col-8" style={{ border: '1px solid #000' }}>{startMonthYear} - {endMonthYear}</td>
-                                                </tr><tr>
-                                                    <th className="col-4" style={{ border: '1px solid #000' }}>Technologies Used:</th>
-                                                    <td className="col-8" style={{ border: '1px solid #000' }}>{technologiesUsed.join(", ")}</td>
-                                                </tr><tr>
-                                                    <th className="col-4" style={{ border: '1px solid #000' }}>Roles and Responsibilities:</th>
-                                                    <td className="col-8" style={{ border: '1px solid #000' }}>{project.project.rolesAndResponsibilities}</td>
-                                                </tr><tr>
-                                                    <th className="col-4" style={{ border: '1px solid #000' }}>Project Description:</th>
-                                                    <td className="col-8" style={{ border: '1px solid #000' }}>{project.project.projectDescription}</td>
-                                                </tr></>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div> */
