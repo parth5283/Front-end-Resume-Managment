@@ -1,4 +1,4 @@
-// store.js
+
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import employeeReducer from './employeeSlice';
 import projectReducer from './projectSlice';
@@ -11,7 +11,7 @@ const rootReducer = combineReducers({
   project: projectReducer,
   skill: skillsReducer,
   certificate: certificateReducer,
-   form: formReducer, // Include the formReducer
+   form: formReducer,
 });
 
 const store = configureStore({

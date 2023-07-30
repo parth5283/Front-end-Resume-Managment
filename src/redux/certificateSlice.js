@@ -27,11 +27,15 @@ const certificateSlice = createSlice({
       addSkillsCertificates: (state, action) => {
         state.certificates = [...state.certificates, action.payload];
       },
-     
+      
+      resetCertificateState: (state) => {
+        state.certificationName = '';
+        state.certificationStartDate = '';
+        state.certificationExpiryDate = '';
+        state.certificates = [];
+      },
   },
 });
-export const resetCertificates = () => ({
-  type: 'certificate/resetCertificates',
-});
-export const { updateCertificationName,updateCertificationStartDate,updateCertificationEndDate,addSkillsCertificates} = certificateSlice.actions;
+
+export const { updateCertificationName,updateCertificationStartDate,updateCertificationEndDate,addSkillsCertificates,resetCertificateState} = certificateSlice.actions;
 export default certificateSlice.reducer;

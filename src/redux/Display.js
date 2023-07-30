@@ -7,7 +7,9 @@ import { getSkills } from './store';
 import axios from 'axios';
 import logo from '../images/preview-page-logo.png';
 import '../previewdata.css';
-
+import { useDispatch } from 'react-redux';
+import { resetCertificateState } from './certificateSlice';
+import { resetSkillState } from './skillSlice';
 const Display = () => {
     const empname = useSelector((state) => state.employee.name);
     const empemail = useSelector((state) => state.employee.email);
@@ -20,6 +22,7 @@ const Display = () => {
     const skills = getSkills();
     const location = useLocation();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const { state } = location;
     const previewDataDisplayRef = React.createRef();
 
@@ -32,6 +35,8 @@ const Display = () => {
 
 
     const handleBack = () => {
+        dispatch(resetCertificateState());
+        dispatch(resetSkillState());
         navigate('/emp-certificates-skills-form', { state: { ...state } });
     }
     const handleDataSubmit = async () => {

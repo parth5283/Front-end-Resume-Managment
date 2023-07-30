@@ -37,8 +37,17 @@ const projectSlice = createSlice({
       addProject: (state, action) => {
         state.projects = [...state.projects, action.payload];
       },
+      resetProjectState: (state) => {
+        state.projectName = '';
+        state.startDate = '';
+        state.endDate = '';
+        state.technologiesUsed = [];
+        state.rolesAndResponsibilities = '';
+        state.projectDescription = '';
+        state.projects = [];
+      },
   },
 });
 
-export const { updateProjectName,updateStartDate,updateEndDate,updateTechnologiesUsed,updateRolesAndResponsbilities,updateProjectDescription ,addProject} = projectSlice.actions;
+export const { updateProjectName,updateStartDate,updateEndDate,updateTechnologiesUsed,updateRolesAndResponsbilities,updateProjectDescription ,addProject,resetProjectState} = projectSlice.actions;
 export default projectSlice.reducer;
