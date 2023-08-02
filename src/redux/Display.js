@@ -2,14 +2,15 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import html2pdf from 'html2pdf.js';
 import { useSelector } from 'react-redux';
-import { jsPDF } from 'jspdf';
+// import { jsPDF } from 'jspdf';
 import { getSkills } from './store';
 import axios from 'axios';
 import logo from '../images/preview-page-logo.png';
-import '../previewdata.css';
+import '../CSS/previewdata.css';
 import { useDispatch } from 'react-redux';
 import { resetCertificateState } from './certificateSlice';
 import { resetSkillState } from './skillSlice';
+import { Send, KeyboardArrowLeft } from '@mui/icons-material';
 const Display = () => {
     const empname = useSelector((state) => state.employee.name);
     const empemail = useSelector((state) => state.employee.email);
@@ -26,7 +27,7 @@ const Display = () => {
     const { state } = location;
     const previewDataDisplayRef = React.createRef();
 
-    const { employee } = location.state || {};
+    // const { employee } = location.state || {};
     const uniqueSkills = [...new Set(skills.map((skill) => skill.skills))];
     console.log("skills", skills);
     skills.forEach(skill => {
@@ -39,135 +40,215 @@ const Display = () => {
         dispatch(resetSkillState());
         navigate('/emp-certificates-skills-form', { state: { ...state } });
     }
-    const handleDataSubmit = async () => {
 
-        const employeeData = {
+    const handleDataSubmit = async () => {
+        try {
+          const employeeData = {
             name: empname,
             email: empemail,
             phonenumber: empphonenumber,
-            email: empemail,
             address: empaddress,
             zipcode: empzipcode,
             profilesummary: empprofileSummary,
-
-        };
-
-        const employeeResponse = await axios.post('http://localhost:8080/api/v1/employees/add-employee', employeeData);
-        console.log("employeeResponse", employeeResponse);
-        const { message, employeeId, name } = employeeResponse.data;
-        console.log("message", message);
-        console.log("employeeId", employeeId);
-
-        // Submit project data
-        const projectData = projects.map((project) => ({
+          };
+      
+          // Submit employee data
+          const employeeResponse = await axios.post('http://localhost:8080/api/v1/employees/add-employee', employeeData);
+          console.log("employeeResponse", employeeResponse);
+          const { message, employeeId } = employeeResponse.data;
+          console.log("message", message);
+          console.log("employeeId", employeeId);
+      
+          // Submit project data
+          const projectData = projects.map((project) => ({
             employeeId: employeeResponse.data.employeeId,
             project: {
-                projectname: project.project.name,
-                startdate: project.project.startDate,
-                enddate: project.project.endDate,
-                technologiesused: project.project.technologiesUsed.join(","),
-                rolesandresponsibilities: project.project.rolesAndResponsibilities,
-                projectdescription: project.project.projectDescription,
-            }
-        }));
-        console.log("project Data:", projectData);
-        axios.post('http://localhost:8080/api/v1/employees/add-projects', { projects: projectData })
-            .then((response) => {
-                console.log('Data stored successfully:', response.data);
-            })
-            .catch((error) => {
-                console.log('An error occurred:', error);
-            });
-
-        const certificateData = certificates.map((certificate) => ({
+              projectname: project.project.name,
+              startdate: project.project.startDate,
+              enddate: project.project.endDate,
+              technologiesused: project.project.technologiesUsed.join(","),
+              rolesandresponsibilities: project.project.rolesAndResponsibilities,
+              projectdescription: project.project.projectDescription,
+            },
+          }));
+          console.log("project Data:", projectData);
+          await axios.post('http://localhost:8080/api/v1/employees/add-projects', { projects: projectData });
+          console.log('Projects data stored successfully.');
+      
+          // Submit certificate data
+          const certificateData = certificates.map((certificate) => ({
             employeeId: employeeResponse.data.employeeId,
             certificate: {
-                certificationname: certificate.certificate.certificationName,
-                certificationdate: certificate.certificate.certificationStartDate,
-                certificationexpirydate: certificate.certificate.certificationExpiryDate,
-                technicalskills: uniqueSkills,
-
-            }
-        }));
-        console.log("certificate Data:", certificateData);
-        axios.post('http://localhost:8080/api/v1/employees/add-certificate-details', { certificates: certificateData })
-            .then((response) => {
-                console.log('Data stored successfully:', response.data);
-            })
-            .catch((error) => {
-                console.log('An error occurred:', error);
-            });
-            try {
-                const pdfElement = previewDataDisplayRef.current;
-                const clonedPdfElement = pdfElement.cloneNode(true);
-                const employeeId = employeeResponse.data.employeeId;
-                const empname = employeeResponse.data.name;
-                const footerDiv = document.createElement('div');
-                footerDiv.style.textAlign = 'center';
-                footerDiv.style.fontSize = '10px';
-                footerDiv.innerText = 'Footer Text - Page {pageNumber}';
-                clonedPdfElement.appendChild(footerDiv);
-                clonedPdfElement.style.height = 'auto';
-                console.log("empname :", empname)
-                const opt = {
-                    filename: `${empname}-resume.pdf`,
-                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    html2canvas: { scale: 2 },
-                    html2pdf: {
-                        margin: [0, 20, 0, 30], // [left, top, right, bottom]
-                        onAfterPageCreate: function (pdf, pageNumber) {
-                            const totalPages = pdf.internal.getNumberOfPages();
-                            const footerContent = footerDiv.cloneNode(true);
-                            footerContent.innerHTML = footerContent.innerHTML.replace('{pageNumber}', pageNumber + ' of ' + totalPages);
-                            pdf.addPage();
-                            pdf.setPage(pageNumber + 1);
-                            pdf.addImage(footerContent, 'center', 290, 100);
-                        },
-                    },
-                };
-                const pdf = new html2pdf().from(clonedPdfElement).set(opt);
-                const pdfBlob = await pdf.output('blob'); // Convert PDF to Blob    
-                const formData = new FormData();
-                formData.append('employeeId', employeeId);
-                formData.append('pdfData', pdfBlob);
-    
-    
-                // Make a POST request to your backend endpoint to save the PDF to the database
-                await axios.post('http://localhost:8080/api/v1/employees/save-PDFtoDb', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data', // Set the appropriate content type
-                    },
-                });
-                console.log("formData", formData);
-                console.log('PDF saved to the database successfully.');
-    
-            } catch (error) {
-                console.error('Error saving PDF to the database:', error);
-            }
-
-
-    }
-
-
-    const sendRequest = async (payload) => {
-        try {
-            const response = await fetch('http://localhost:8080/api/v1/employees/save-PDFtoDb', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            });
-
-            if (response.ok) {
-                console.log('PDF saved to database successfully');
-            } else {
-                console.error('Error saving PDF:', response.statusText);
-            }
+              certificationname: certificate.certificate.certificationName,
+              certificationdate: certificate.certificate.certificationStartDate,
+              certificationexpirydate: certificate.certificate.certificationExpiryDate,
+              technicalskills: uniqueSkills,
+            },
+          }));
+          console.log("certificate Data:", certificateData);
+          await axios.post('http://localhost:8080/api/v1/employees/add-certificate-details', { certificates: certificateData });
+          console.log('Certificate data stored successfully.');
+      
+          // Generate PDF and save to the database
+          const pdfElement = previewDataDisplayRef.current;
+          const clonedPdfElement = pdfElement.cloneNode(true);
+          const footerDiv = document.createElement('div');
+          footerDiv.style.textAlign = 'center';
+          footerDiv.style.fontSize = '10px';
+          footerDiv.innerText = 'Footer Text - Page {pageNumber}';
+          clonedPdfElement.appendChild(footerDiv);
+          clonedPdfElement.style.height = 'auto';
+          const opt = {
+            filename: `${empname}-resume.pdf`,
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            html2canvas: { scale: 2 },
+            html2pdf: {
+              margin: [0, 20, 0, 30],
+              onAfterPageCreate: function (pdf, pageNumber) {
+                const totalPages = pdf.internal.getNumberOfPages();
+                const footerContent = footerDiv.cloneNode(true);
+                footerContent.innerHTML = footerContent.innerHTML.replace('{pageNumber}', pageNumber + ' of ' + totalPages);
+                pdf.addPage();
+                pdf.setPage(pageNumber + 1);
+                pdf.addImage(footerContent, 'center', 290, 100);
+              },
+            },
+          };
+          const pdf = new html2pdf().from(clonedPdfElement).set(opt);
+          const pdfBlob = await pdf.output('blob');
+      
+          const formData = new FormData();
+          formData.append('employeeId', employeeId);
+          formData.append('pdfData', pdfBlob);
+      
+          // Make a POST request to save the PDF to the database
+          await axios.post('http://localhost:8080/api/v1/employees/save-PDFtoDb', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          console.log('PDF saved to the database successfully.');
+      
+          // Navigate to the success page
+          navigate('/success');
         } catch (error) {
-            console.error('Error saving PDF:', error);
+          console.error('Error submitting data:', error);
+      
+          // Navigate to the error page
+          navigate('/error');
         }
-    };
+      };
+      
+    // const handleDataSubmit = async () => {
+
+    //     const employeeData = {
+    //         name: empname,
+    //         email: empemail,
+    //         phonenumber: empphonenumber,
+    //         // email: empemail,
+    //         address: empaddress,
+    //         zipcode: empzipcode,
+    //         profilesummary: empprofileSummary,
+
+    //     };
+
+    //     const employeeResponse = await axios.post('http://localhost:8080/api/v1/employees/add-employee', employeeData);
+    //     console.log("employeeResponse", employeeResponse);
+    //     // const { message, employeeId, name } = employeeResponse.data;
+    //     const { message, employeeId } = employeeResponse.data;
+    //     console.log("message", message);
+    //     console.log("employeeId", employeeId);
+
+    //     // Submit project data
+    //     const projectData = projects.map((project) => ({
+    //         employeeId: employeeResponse.data.employeeId,
+    //         project: {
+    //             projectname: project.project.name,
+    //             startdate: project.project.startDate,
+    //             enddate: project.project.endDate,
+    //             technologiesused: project.project.technologiesUsed.join(","),
+    //             rolesandresponsibilities: project.project.rolesAndResponsibilities,
+    //             projectdescription: project.project.projectDescription,
+    //         }
+    //     }));
+    //     console.log("project Data:", projectData);
+    //     axios.post('http://localhost:8080/api/v1/employees/add-projects', { projects: projectData })
+    //         .then((response) => {
+    //             console.log('Data stored successfully:', response.data);
+    //         })
+    //         .catch((error) => {
+    //             console.log('An error occurred:', error);
+    //         });
+
+    //     const certificateData = certificates.map((certificate) => ({
+    //         employeeId: employeeResponse.data.employeeId,
+    //         certificate: {
+    //             certificationname: certificate.certificate.certificationName,
+    //             certificationdate: certificate.certificate.certificationStartDate,
+    //             certificationexpirydate: certificate.certificate.certificationExpiryDate,
+    //             technicalskills: uniqueSkills,
+
+    //         }
+    //     }));
+    //     console.log("certificate Data:", certificateData);
+    //     axios.post('http://localhost:8080/api/v1/employees/add-certificate-details', { certificates: certificateData })
+    //         .then((response) => {
+    //             console.log('Data stored successfully:', response.data);
+    //         })
+    //         .catch((error) => {
+    //             console.log('An error occurred:', error);
+    //         });
+    //     try {
+    //         const pdfElement = previewDataDisplayRef.current;
+    //         const clonedPdfElement = pdfElement.cloneNode(true);
+    //         const employeeId = employeeResponse.data.employeeId;
+    //         const empname = employeeResponse.data.name;
+    //         const footerDiv = document.createElement('div');
+    //         footerDiv.style.textAlign = 'center';
+    //         footerDiv.style.fontSize = '10px';
+    //         footerDiv.innerText = 'Footer Text - Page {pageNumber}';
+    //         clonedPdfElement.appendChild(footerDiv);
+    //         clonedPdfElement.style.height = 'auto';
+    //         console.log("empname :", empname)
+    //         const opt = {
+    //             filename: `${empname}-resume.pdf`,
+    //             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    //             html2canvas: { scale: 2 },
+    //             html2pdf: {
+    //                 margin: [0, 20, 0, 30], // [left, top, right, bottom]
+    //                 onAfterPageCreate: function (pdf, pageNumber) {
+    //                     const totalPages = pdf.internal.getNumberOfPages();
+    //                     const footerContent = footerDiv.cloneNode(true);
+    //                     footerContent.innerHTML = footerContent.innerHTML.replace('{pageNumber}', pageNumber + ' of ' + totalPages);
+    //                     pdf.addPage();
+    //                     pdf.setPage(pageNumber + 1);
+    //                     pdf.addImage(footerContent, 'center', 290, 100);
+    //                 },
+    //             },
+    //         };
+    //         const pdf = new html2pdf().from(clonedPdfElement).set(opt);
+    //         const pdfBlob = await pdf.output('blob'); // Convert PDF to Blob    
+    //         const formData = new FormData();
+    //         formData.append('employeeId', employeeId);
+    //         formData.append('pdfData', pdfBlob);
+
+
+    //         // Make a POST request to your backend endpoint to save the PDF to the database
+    //         await axios.post('http://localhost:8080/api/v1/employees/save-PDFtoDb', formData, {
+    //             headers: {
+    //                 'Content-Type': 'multipart/form-data', // Set the appropriate content type
+    //             },
+    //         });
+    //         console.log("formData", formData);
+    //         console.log('PDF saved to the database successfully.');
+
+    //     } catch (error) {
+    //         console.error('Error saving PDF to the database:', error);
+    //     }
+
+
+    // }
+
 
     return (
         <>
@@ -258,7 +339,7 @@ const Display = () => {
 
                         </div> */}
 
-<div className="col-md-12 skills-details">
+                        <div className="col-md-12 skills-details">
                             {uniqueSkills.map((skill, index) => (
                                 <span key={index} className="skills">
                                     {skill.join(",   ")}
@@ -301,7 +382,7 @@ const Display = () => {
 
                                         <div className='row my-3 '>
 
-                                        <div className='col-md-3'>
+                                            <div className='col-md-3'>
                                                 <span className="project-technologies-label">Technologies Used:</span>
                                             </div>
                                             <div className='col-md-9'>
@@ -338,7 +419,7 @@ const Display = () => {
 
 
 
-                   
+
 
 
                     <hr className='horizontal-break' />
@@ -351,10 +432,10 @@ const Display = () => {
                 <div className="submit-button-blocks">
                     <div className="row">
                         <div className="col-md-6 text-start">
-                            <button className="btn btn-secondary" onClick={handleBack}>Back</button>
+                            <button className="btn btn-secondary fixed-width-btn justify-text" onClick={handleBack}><KeyboardArrowLeft /> Back</button>
                         </div>
                         <div className="col-md-6 text-end">
-                            <button className="btn btn-primary" onClick={handleDataSubmit}>Submit</button>
+                            <button variant="contained" className="btn btn-primary fixed-width-btn justify-text" onClick={handleDataSubmit}>Submit <Send className='send-btn' /></button>
                         </div>
                     </div>
                 </div>

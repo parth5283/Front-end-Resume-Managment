@@ -1,5 +1,5 @@
 /* Global Styles */
-@import "~@fortawesome/fontawesome-free/css/all.min.css";
+/* @import "~@fortawesome/fontawesome-free/css/all.min.css"; */
 
 body {
   margin: 0;
@@ -223,4 +223,26 @@ textarea:focus {
 
 .react-tagsinput .react-tagsinput-input:focus {
   box-shadow: 0 0 0 2px #ddd;
+}
+
+.fixed-width-btn {
+  width: 136px; 
+  
+}
+
+.justify-text {
+  text-align: justify;
+}
+
+
+
+.send-btn {
+  position: absolute;
+    padding: 4px;
+    top: 15%;
+    left: auto;
+    right: 4%;
+    bottom: auto;
+    vertical-align: middle;
+    transform: rotate(316deg);
 }

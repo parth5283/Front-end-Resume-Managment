@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FaChevronRight, FaChevronLeft, FaTimes, FaPlus } from 'react-icons/fa';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
 import { useSelector, useDispatch } from 'react-redux';
-import { addSkillsCertificates,updateCertificationName,updateCertificationStartDate,updateCertificationEndDate } from '../redux/certificateSlice';
+import { addSkillsCertificates, updateCertificationName, updateCertificationStartDate, updateCertificationEndDate } from '../redux/certificateSlice';
 import { updateSkills } from '../redux/skillSlice';
 import { resetProjectState } from '../redux/projectSlice';
+import { KeyboardArrowLeft, Delete, Add,Visibility, VerticalAlignBottom } from '@mui/icons-material';
+
+
 
 const EmpSkillCertificationForm = () => {
-  
+
   const skils = useSelector((state) => state.skill.skills);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
-  const {state}=location;
-  const { employee, projects } = location.state || {};
-  
-  const [certificates, setCertifications] = useState(state?.certificates ||[
+  const { state } = location;
+  // const { employee, projects } = location.state || {};
+  const { projects } = location.state || {};
+  const [skills, setSkills] = useState(state?.skills || []);
+  const [certificates, setCertifications] = useState(state?.certificates || [
     {
       certificationName: '',
       certificationStartDate: '',
@@ -26,14 +29,51 @@ const EmpSkillCertificationForm = () => {
     },
   ]);
 
-  const [skills, setSkills] = useState(state?.skills||[]);
+
 
   const handleCertificationChange = (index, e) => {
     const { name, value } = e.target;
+  
     const updatedCertifications = [...certificates];
     updatedCertifications[index] = { ...updatedCertifications[index], [name]: value };
+  
+    // Additional validation for Certification Expiry Date
+    if (name === 'certificationExpiryDate') {
+      const startDate = updatedCertifications[index].certificationStartDate;
+      const expiryDate = value;
+      if (startDate && expiryDate) {
+        const startDateObj = new Date(startDate);
+        const expiryDateObj = new Date(expiryDate);
+        if (expiryDateObj <= startDateObj) { // Use <= instead of <
+          updatedCertifications[index].errors.certificationExpiryDate = 'Expiry Date cannot be before or equal to Start Date';
+        } else {
+          updatedCertifications[index].errors.certificationExpiryDate = '';
+        }
+      }
+    }
+  
+    // Additional validation for Year (similar to startDate and endDate validation)
+    if (['certificationStartDate', 'certificationExpiryDate'].includes(name)) {
+      const yearPattern = /^\d{4}$/; // Regular expression for exactly 4 digits
+      const currentDate = new Date(value);
+      const year = currentDate.getFullYear().toString();
+      if (!year.match(yearPattern) || currentDate.getFullYear() < 1950 || currentDate.getFullYear() > 2099) {
+        const errors = { ...updatedCertifications[index].errors };
+        errors[name] = 'Please enter a valid year between 1950 and 2099';
+        updatedCertifications[index].errors = errors;
+      } else {
+        const errors = { ...updatedCertifications[index].errors };
+        delete errors[name];
+        updatedCertifications[index].errors = errors;
+      }
+    }
+  
     setCertifications(updatedCertifications);
   };
+   
+  
+  
+
 
   const handleAddCertification = () => {
     const newCertificate = {
@@ -42,16 +82,18 @@ const EmpSkillCertificationForm = () => {
       certificationExpiryDate: '',
       errors: {},
     };
-  
     setCertifications([...certificates, newCertificate]);
-   
   };
+
+
 
   const handleRemoveCertification = (index) => {
     const updatedCertifications = [...certificates];
     updatedCertifications.splice(index, 1);
     setCertifications(updatedCertifications);
   };
+
+
 
   const handlePreview = () => {
     if (validateForm()) {
@@ -60,18 +102,19 @@ const EmpSkillCertificationForm = () => {
         dispatch(updateCertificationStartDate({ index, startDate: certificate.certificationStartDate }));
         dispatch(updateCertificationEndDate({ index, endDate: certificate.certificationExpiryDate }));
       });
-      skills.forEach((skill,index) =>{
+      skills.forEach((skill, index) => {
         dispatch(updateSkills({ index, skills: skills }));
       });
-   
-      console.log("certificates",certificates);
-      console.log("skills",skills);
-      console.log("skils",skils)
-      navigate('/display', {state: { ...state,skills,certificates }}); 
+
+      console.log("certificates", certificates);
+      console.log("skills", skills);
+      console.log("skils", skils)
+      navigate('/display', { state: { ...state, skills, certificates } });
       //console.log( 'data',{state: { employee: skills, certifications }});
-      // Perform form submission or any other desired action
     }
   };
+
+
 
   const validateForm = () => {
     let formIsValid = true;
@@ -85,7 +128,6 @@ const EmpSkillCertificationForm = () => {
         errors.certificationName = 'Please enter a certification name';
         formIsValid = false;
       }
-
 
       if (certification.certificationStartDate.trim() === '') {
         errors.certificationStartDate = 'Please select a certification start date';
@@ -104,23 +146,19 @@ const EmpSkillCertificationForm = () => {
           certificationName: certification.certificationName,
           certificationStartDate: certification.certificationStartDate,
           certificationExpiryDate: certification.certificationExpiryDate,
-          
         },
       }));
-    
     }
-
     setCertifications(updatedCertifications);
-   
     return formIsValid;
   };
- 
-  const handlePrevious = () => {
-    
-    dispatch(resetProjectState());
-    navigate('/emp-project-details', { state: { ...state,projects } });
 
+  const handlePrevious = () => {
+    dispatch(resetProjectState());
+    navigate('/emp-project-details', { state: { ...state, projects } });
   };
+
+
 
   return (
     <>
@@ -136,7 +174,7 @@ const EmpSkillCertificationForm = () => {
                   <h4 className='text-center'>
                     Certification {index + 1}
                     <button type='button' className='add-certification-button float-right' onClick={handleAddCertification}>
-                      <FaPlus className='plus-icon' />
+                      <Add />
                     </button>
                   </h4>
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${certification.errors.certificationName ? 'has-error' : ''}`}>
@@ -157,26 +195,6 @@ const EmpSkillCertificationForm = () => {
                       {certification.errors.certificationName && <div className='invalid-feedback'>{certification.errors.certificationName}</div>}
                     </div>
                   </div>
-                  {/* <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${certification.errors.certificationAuthority ? 'has-error' : ''}`}>
-                    <label htmlFor={`certificationAuthority-${index}`} className='col-md-4 col-form-label text-start'>
-                      Certification Authority
-                    </label>
-                    <div className='col-md-8'>
-                      <input
-                        type='text'
-                        id={`certificationAuthority-${index}`}
-                        name='certificationAuthority'
-                        value={certification.certificationAuthority}
-                        onChange={(e) => handleCertificationChange(index, e)}
-                        placeholder='Enter Certification Authority'
-                        className={`form-control ${certification.errors.certificationAuthority ? 'is-invalid' : ''}`}
-                        required
-                      />
-                      {certification.errors.certificationAuthority && (
-                        <div className='invalid-feedback'>{certification.errors.certificationAuthority}</div>
-                      )}
-                    </div>
-                  </div> */}
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${certification.errors.certificationStartDate ? 'has-error' : ''}`}>
                     <label htmlFor={`certificationStartDate-${index}`} className='col-md-4 col-form-label text-start'>
                       Certification Start Date
@@ -214,23 +232,19 @@ const EmpSkillCertificationForm = () => {
                   {index > 0 && (
                     <div className='form-group row my-3 d-flex align-items-center justify-content-end'>
                       <div className='col-sm-12 col-md-12 d-flex justify-content-end'>
-                        <button type='button' className='btn btn-danger' onClick={() => handleRemoveCertification(index)}>
-                          <FaTimes />
+                        <button type='button' className='btn btn-danger remove-certification' onClick={() => handleRemoveCertification(index)}>
+                          <Delete />
                         </button>
                       </div>
                     </div>
                   )}
                 </div>
               ))}
-
               <div className='skills-details my-5'>
-                
                 <div className={`form-group row my-3 d-flex align-items-center justify-content-center`}>
-                  
                   <label htmlFor="skills" className='col-md-4 col-form-label text-start'>
-                      Skills
-                    </label>
-                  
+                    Skills
+                  </label>
                   <div className='col-md-8'>
                     <TagsInput
                       value={skills}
@@ -242,14 +256,13 @@ const EmpSkillCertificationForm = () => {
                   </div>
                 </div>
               </div>
-
               <div className='form-group row mb-3 d-flex align-items-center justify-content-center text-end'>
                 <div className='col-sm-12 col-md-12 d-flex justify-content-between'>
-                  <button type='button' className='btn btn-secondary' onClick={handlePrevious}>
-                    <FaChevronLeft /> Previous
+                  <button type='button' className='btn btn-secondary fixed-width-btn justify-text' onClick={handlePrevious}>
+                    <KeyboardArrowLeft /> Previous
                   </button>
-                  <button type='button' className='btn btn-primary' onClick={handlePreview}>
-                    Preview
+                  <button type='button' className='btn btn-primary fixed-width-btn justify-text' onClick={handlePreview}>
+                   Preview <Visibility  style={{ marginLeft: '5px', verticalAlign: 'bottom' }} />
                   </button>
                 </div>
               </div>
@@ -260,5 +273,7 @@ const EmpSkillCertificationForm = () => {
     </>
   );
 };
+
+
 
 export default EmpSkillCertificationForm;

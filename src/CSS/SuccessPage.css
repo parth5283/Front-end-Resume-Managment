@@ -1,0 +1,85 @@
+/* SuccessPage.css */
+
+.success-page-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.success-page-content {
+  text-align: center;
+}
+
+.success-title {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.success-description {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+.success-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.success-actions button{
+  margin-right: 10px;
+    width: 150px;
+    height: 50px;
+}
+
+.success-button,
+.back-button {
+  min-width: 160px;
+  text-transform: none;
+  font-weight: bold;
+}
+
+.success-button .MuiButton-startIcon,
+.back-button .MuiButton-startIcon {
+  margin-right: 8px;
+}
+
+.success-button-icon,
+.back-button-icon {
+  font-size: 24px;
+}
+
+.success-button {
+  background-color: #4caf50;
+  color: #ffffff;
+}
+
+.back-button {
+  background-color: #f44336;
+  color: #ffffff;
+}
+
+.success-button:hover,
+.success-button:focus {
+  background-color: #45a049;
+}
+
+.success-button:active {
+  background-color: #3e8e41;
+}
+
+.back-button:hover,
+.back-button:focus {
+  background-color: #e53935;
+}
+
+.back-button:active {
+  background-color: #c62828;
+}
+
+.success-button:focus,
+.back-button:focus {
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.6);
+}

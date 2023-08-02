@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LockIcon from '@mui/icons-material/Lock';
+import LoginIcon from '@mui/icons-material/Login';
 
 const LoginPage = ({ handleLogin }) => {
   const [username, setUsername] = useState('');
@@ -8,7 +11,7 @@ const LoginPage = ({ handleLogin }) => {
   const [validInputs, setValidInputs] = useState({});
   const [loginError, setLoginError] = useState(false);
 
-  const handleLoginFormSubmit =async (e) => {
+  const handleLoginFormSubmit = async (e) => {
     e.preventDefault();
 
     // Validate form fields
@@ -29,13 +32,12 @@ const LoginPage = ({ handleLogin }) => {
     if (Object.keys(newErrors).length === 0) {
       try {
         // Send the login request to the backend
-        const  response = await axios.post('http://localhost:8080/login', {
+        const response = await axios.post('http://localhost:8080/login', {
           username: username,
           password: password,
-          
         });
         console.log(response);
-        if (response.data.message==='Login successful') {
+        if (response.data.message === 'Login successful') {
           // Login successful, call the handleLogin function passed from the parent
           handleLogin(username, password);
         } else {
@@ -45,7 +47,8 @@ const LoginPage = ({ handleLogin }) => {
       } catch (error) {
         console.log('Login error:', error);
         setLoginError('An error occurred during login');
-      }}
+      }
+    }
   };
 
   const handleInputChange = (e) => {
@@ -86,15 +89,16 @@ const LoginPage = ({ handleLogin }) => {
               } ${validInputs.username ? 'has-success' : ''}`}
             >
               <label htmlFor="username" className="col-md-4 col-form-label text-start">
-                Username <i className="fas fa-user ml-2"></i>
+                <AccountCircleIcon className="mr-2" />
+                Username
               </label>
               <div className="col-md-8">
                 <input
                   type="text"
                   id="username"
-                  className={`form-control ${errors.username ? 'is-invalid' : ''} ${
-                    validInputs.username ? 'is-valid' : ''
-                  }`}
+                  className={`form-control ${
+                    errors.username ? 'is-invalid' : ''
+                  } ${validInputs.username ? 'is-valid' : ''}`}
                   value={username}
                   placeholder="Enter Username"
                   onChange={handleInputChange}
@@ -108,15 +112,16 @@ const LoginPage = ({ handleLogin }) => {
               } ${validInputs.password ? 'has-success' : ''}`}
             >
               <label htmlFor="password" className="col-md-4 col-form-label text-start">
-                Password <i className="fas fa-lock ml-2"></i>
+                <LockIcon className="mr-2" />
+                Password
               </label>
               <div className="col-md-8">
                 <input
                   type="password"
                   id="password"
-                  className={`form-control ${errors.password ? 'is-invalid' : ''} ${
-                    validInputs.password ? 'is-valid' : ''
-                  }`}
+                  className={`form-control ${
+                    errors.password ? 'is-invalid' : ''
+                  } ${validInputs.password ? 'is-valid' : ''}`}
                   value={password}
                   placeholder="Enter Password"
                   onChange={handleInputChange}
@@ -131,7 +136,7 @@ const LoginPage = ({ handleLogin }) => {
             )}
             <div className="form-group row my-5 d-flex align-items-center justify-content-center text-center">
               <button type="submit" className="btn btn-primary">
-                Login
+              <LoginIcon /> Login
               </button>
             </div>
           </form>

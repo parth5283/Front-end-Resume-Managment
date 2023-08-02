@@ -1,18 +1,18 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FaChevronRight, FaChevronLeft, FaTimes, FaPlus } from 'react-icons/fa';
 import 'react-tagsinput/react-tagsinput.css';
 import TagsInput from 'react-tagsinput';
-import { useSelector, useDispatch } from 'react-redux';
-import {addProject,updateProjectName,updateStartDate,updateEndDate,updateTechnologiesUsed,updateRolesAndResponsbilities,updateProjectDescription  } from '../redux/projectSlice';
+import { useDispatch } from 'react-redux';
+import { addProject, updateProjectName, updateStartDate, updateEndDate, updateTechnologiesUsed, updateRolesAndResponsbilities, updateProjectDescription } from '../redux/projectSlice';
+import { KeyboardArrowLeft, KeyboardArrowRight, Delete, Add } from '@mui/icons-material';
 
 
 const EmpProjectDetailsForm = () => {
-  const projectss = useSelector((state) => state.project.projects);
+  // const projectss = useSelector((state) => state.project.projects);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {state}=location;
+  const { state } = location;
   const { employee } = location.state || {};
 
   const [projects, setProjects] = useState(state?.projects || [
@@ -26,6 +26,7 @@ const EmpProjectDetailsForm = () => {
       errors: {},
     },
   ]);
+
 
 
   useEffect(() => {
@@ -47,17 +48,25 @@ const EmpProjectDetailsForm = () => {
     }
   }, [state]);
 
+
+
   useEffect(() => {
     sessionStorage.setItem('projects', JSON.stringify(projects));
   }, [projects]);
 
-  
+
+  const formatDateInput = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   const handleProjectChange = (index, e) => {
     const { name, value } = e.target;
     const updatedProjects = [...projects];
     updatedProjects[index] = { ...updatedProjects[index], [name]: value };
-  
+
     // Check if the end date is before the start date
     if (name === 'endDate' && value < updatedProjects[index].startDate) {
       const errors = { ...updatedProjects[index].errors };
@@ -68,15 +77,36 @@ const EmpProjectDetailsForm = () => {
       delete errors.endDate;
       updatedProjects[index].errors = errors;
     }
-  
+
+    // Additional validation to prevent dates before 1950 and more than 4 digits for the year
+    if (name === 'startDate' || name === 'endDate') {
+      const yearPattern = /^\d{1,4}$/; // Regular expression for 1 to 4 digits
+      const currentDate = new Date(value);
+      const year = currentDate.getFullYear().toString();
+      if (!year.match(yearPattern) || currentDate.getFullYear() < 1950) {
+        const errors = { ...updatedProjects[index].errors };
+        errors[name] = 'Invalid year';
+        updatedProjects[index].errors = errors;
+      } else {
+        const errors = { ...updatedProjects[index].errors };
+        delete errors[name];
+        updatedProjects[index].errors = errors;
+      }
+
+      // Convert the date to the correct format "yyyy-MM-dd" before updating the state
+      const formattedDate = formatDateInput(currentDate);
+      e.target.value = formattedDate;
+    }
+
     setProjects(updatedProjects);
   };
-  
+
+
 
   const handleTechnologiesChange = (index, tags) => {
     const updatedProjects = [...projects];
     updatedProjects[index] = { ...updatedProjects[index], technologiesUsed: tags };
-    
+
     // Validation for Technologies Used
     const errors = { ...updatedProjects[index].errors };
     if (tags.length === 0) {
@@ -84,12 +114,12 @@ const EmpProjectDetailsForm = () => {
     } else {
       delete errors.technologiesUsed;
     }
-    
+
     updatedProjects[index].errors = errors;
-    
+
     setProjects(updatedProjects);
   };
-  
+
 
   const handleAddProject = () => {
     const newProject = {
@@ -101,50 +131,49 @@ const EmpProjectDetailsForm = () => {
       projectDescription: '',
       errors: {},
     };
-  
+
     setProjects([...projects, newProject]);
   };
 
   const handleRemoveProject = (index) => {
-   const updatedProjects = [...projects];
-   updatedProjects.splice(index, 1);
+    const updatedProjects = [...projects];
+    updatedProjects.splice(index, 1);
     setProjects(updatedProjects);
   };
 
-  const handlePrevious = () => {
-    
-  navigate('/', { state: { ...state,employee } });
-};
 
-  
+
+  const handlePrevious = () => {
+    navigate('/', { state: { ...state, employee } });
+  };
+
+
 
   const handleNext = () => {
     if (validateForm()) {
-     // dispatch(saveProjectDetails(projects));
-     projects.forEach((project, index) => {
-      dispatch(updateProjectName({ index, name: project.projectName }));
-      dispatch(updateStartDate({ index, startDate: project.startDate }));
-      dispatch(updateEndDate({ index, endDate: project.endDate }));
-      dispatch(updateTechnologiesUsed({ index, technologiesUsed: project.technologiesUsed }));
-      dispatch(updateRolesAndResponsbilities({ index, rolesAndResponsibilities: project.rolesAndResponsibilities }));
-      dispatch(updateProjectDescription({ index, projectDescription: project.projectDescription }));
-    });
-    console.log("Projects",projects)
-    
-     //console.log("projectReducer",projectss);
-      navigate('/emp-certificates-skills-form', { state: { ...state,projects } });
+      // dispatch(saveProjectDetails(projects));
+      projects.forEach((project, index) => {
+        dispatch(updateProjectName({ index, name: project.projectName }));
+        dispatch(updateStartDate({ index, startDate: project.startDate }));
+        dispatch(updateEndDate({ index, endDate: project.endDate }));
+        dispatch(updateTechnologiesUsed({ index, technologiesUsed: project.technologiesUsed }));
+        dispatch(updateRolesAndResponsbilities({ index, rolesAndResponsibilities: project.rolesAndResponsibilities }));
+        dispatch(updateProjectDescription({ index, projectDescription: project.projectDescription }));
+      });
+      // console.log("Projects",projects)
+      //console.log("projectReducer",projectss);
+      navigate('/emp-certificates-skills-form', { state: { ...state, projects } });
     }
   };
 
   const validateForm = () => {
     let formIsValid = true;
-    let i;
     const updatedProjects = [...projects];
 
     for (let i = 0; i < updatedProjects.length; i++) {
       const project = updatedProjects[i];
       const errors = {};
-         console.log("loop",i);
+      //  console.log("loop",i);
       if (project.projectName.trim() === '') {
         errors.projectName = 'Please enter a project name';
         formIsValid = false;
@@ -190,9 +219,9 @@ const EmpProjectDetailsForm = () => {
     }
 
     setProjects(updatedProjects);
-   
+
     return formIsValid;
-    
+
   };
 
   return (
@@ -209,7 +238,8 @@ const EmpProjectDetailsForm = () => {
                   <h4 className='text-center'>
                     Project {index + 1}
                     <button type='button' className='add-project-button float-right' onClick={handleAddProject}>
-                      <FaPlus className='plus-icon' />
+                      {/* <FaPlus className='plus-icon' /> */}
+                      <Add />
                     </button>
                   </h4>
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${project.errors.projectName ? 'has-error' : ''}`}>
@@ -265,22 +295,22 @@ const EmpProjectDetailsForm = () => {
                     </div>
                   </div>
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${project.errors.technologiesUsed ? 'has-error' : ''}`}>
-  <label htmlFor={`technologiesUsed-${index}`} className='col-md-4 col-form-label text-start'>
-    Technologies Used
-  </label>
-  <div className='col-md-8'>
-    <TagsInput
-      value={project.technologiesUsed}
-      onChange={(tags) => handleTechnologiesChange(index, tags)}
-      inputProps={{
-        placeholder: 'Enter Technologies Used',
-        className: `form-control ${project.errors.technologiesUsed ? 'is-invalid' : ''}`,
-      }}
-      required
-    />
-    {project.errors.technologiesUsed && <div className='invalid-feedback'>{project.errors.technologiesUsed}</div>}
-  </div>
-</div>
+                    <label htmlFor={`technologiesUsed-${index}`} className='col-md-4 col-form-label text-start'>
+                      Technologies Used
+                    </label>
+                    <div className='col-md-8'>
+                      <TagsInput
+                        value={project.technologiesUsed}
+                        onChange={(tags) => handleTechnologiesChange(index, tags)}
+                        inputProps={{
+                          placeholder: 'Enter Technologies Used',
+                          className: `form-control ${project.errors.technologiesUsed ? 'is-invalid' : ''}`,
+                        }}
+                        required
+                      />
+                      {project.errors.technologiesUsed && <div className='invalid-feedback'>{project.errors.technologiesUsed}</div>}
+                    </div>
+                  </div>
 
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${project.errors.rolesAndResponsibilities ? 'has-error' : ''}`}>
                     <label htmlFor={`rolesAndResponsibilities-${index}`} className='col-md-4 col-form-label text-start'>
@@ -320,7 +350,7 @@ const EmpProjectDetailsForm = () => {
                     <div className='form-group row my-3 d-flex align-items-center justify-content-end'>
                       <div className='col-sm-12 col-md-12 d-flex justify-content-end'>
                         <button type='button' className='btn btn-danger' onClick={() => handleRemoveProject(index)}>
-                          <FaTimes />
+                          <Delete />
                         </button>
                       </div>
                     </div>
@@ -328,13 +358,17 @@ const EmpProjectDetailsForm = () => {
                 </div>
               ))}
 
-              <div className='form-group row mb-3 d-flex align-items-center justify-content-center text-end'>
-                <div className='col-sm-12 col-md-12 d-flex justify-content-between'>
-                  <button type='button' className='btn btn-secondary' onClick={handlePrevious}>
-                    <FaChevronLeft /> Previous
+              <div className='form-group row mb-3 d-flex align-items-center justify-content-center  px-3'>
+
+                <div className=' col-md-6 d-flex text-start'>
+                  <button type='button' className='btn btn-secondary fixed-width-btn justify-text' onClick={handlePrevious}>
+                    <KeyboardArrowLeft /> Previous
                   </button>
-                  <button type='button' className='btn btn-primary' onClick={handleNext}>
-                    Next <FaChevronRight />
+                </div>
+                <div className='col-md-6 text-end'>
+
+                  <button type='button' className='btn btn-primary fixed-width-btn justify-text' onClick={handleNext}>
+                    Next <KeyboardArrowRight />
                   </button>
                 </div>
               </div>
@@ -347,3 +381,24 @@ const EmpProjectDetailsForm = () => {
 };
 
 export default EmpProjectDetailsForm;
+
+
+
+// const handleProjectChange = (index, e) => {
+//   const { name, value } = e.target;
+//   const updatedProjects = [...projects];
+//   updatedProjects[index] = { ...updatedProjects[index], [name]: value };
+
+//   // Check if the end date is before the start date
+//   if (name === 'endDate' && value < updatedProjects[index].startDate) {
+//     const errors = { ...updatedProjects[index].errors };
+//     errors.endDate = 'End date cannot be before the start date';
+//     updatedProjects[index].errors = errors;
+//   } else {
+//     const errors = { ...updatedProjects[index].errors };
+//     delete errors.endDate;
+//     updatedProjects[index].errors = errors;
+//   }
+
+//   setProjects(updatedProjects);
+// };
