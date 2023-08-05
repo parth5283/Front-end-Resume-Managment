@@ -4,7 +4,10 @@ import 'react-tagsinput/react-tagsinput.css';
 import TagsInput from 'react-tagsinput';
 import { useDispatch } from 'react-redux';
 import { addProject, updateProjectName, updateStartDate, updateEndDate, updateTechnologiesUsed, updateRolesAndResponsbilities, updateProjectDescription } from '../redux/projectSlice';
-import { KeyboardArrowLeft, KeyboardArrowRight, Delete, Add } from '@mui/icons-material';
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
+
+import { Fab, IconButton } from '@mui/material';
+import { Add, Delete } from '@mui/icons-material';
 
 
 const EmpProjectDetailsForm = () => {
@@ -98,6 +101,35 @@ const EmpProjectDetailsForm = () => {
       e.target.value = formattedDate;
     }
 
+    setProjects(updatedProjects);
+  };
+
+
+
+  const handlePresentCheckboxChange = (index, e) => {
+    const { checked } = e.target;
+    const updatedProjects = [...projects];
+    if (checked) {
+      // If "Present" is checked, store the original endDate value and set endDate to 'Present'
+      updatedProjects[index] = {
+        ...updatedProjects[index],
+        originalEndDate: updatedProjects[index].endDate, // Store the original endDate value
+        endDate: 'Present',
+        errors: { ...updatedProjects[index].errors, endDate: '' },
+      };
+    } else {
+      // If "Present" is unchecked, restore the original endDate value and validate it again
+      const originalEndDate = updatedProjects[index].originalEndDate;
+      const errors = { ...updatedProjects[index].errors };
+      if (!originalEndDate || originalEndDate.trim() === '') {
+        errors.endDate = 'Please select an end date';
+      }
+      updatedProjects[index] = {
+        ...updatedProjects[index],
+        endDate: originalEndDate, // Restore the original endDate value
+        errors,
+      };
+    }
     setProjects(updatedProjects);
   };
 
@@ -237,10 +269,12 @@ const EmpProjectDetailsForm = () => {
                 <div key={index} className='project-details my-3'>
                   <h4 className='text-center'>
                     Project {index + 1}
-                    <button type='button' className='add-project-button float-right' onClick={handleAddProject}>
-                      {/* <FaPlus className='plus-icon' /> */}
+                    {/* <button type='button' className='add-project-button float-right' onClick={handleAddProject}>
                       <Add />
-                    </button>
+                    </button> */}
+                    <Fab color='primary' aria-label='add' className='add-project-button' onClick={handleAddProject}>
+                      <Add />
+                    </Fab>
                   </h4>
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${project.errors.projectName ? 'has-error' : ''}`}>
                     <label htmlFor={`projectName-${index}`} className='col-md-4 col-form-label text-start'>
@@ -277,7 +311,50 @@ const EmpProjectDetailsForm = () => {
                       {project.errors.startDate && <div className='invalid-feedback'>{project.errors.startDate}</div>}
                     </div>
                   </div>
+
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${project.errors.endDate ? 'has-error' : ''}`}>
+                    <label htmlFor={`endDate-${index}`} className='col-md-4 col-form-label text-start'>
+                      End Date
+                    </label>
+                    <div className='col-md-8'>
+                      <input
+                        type='date'
+                        id={`endDate-${index}`}
+                        name='endDate'
+                        value={project.endDate === 'Present' ? '' : project.endDate}
+                        onChange={(e) => handleProjectChange(index, e)}
+                        className={`form-control ${project.errors.endDate ? 'is-invalid' : ''}`}
+                        required={!project.endDate === 'Present'}
+                        disabled={project.endDate === 'Present'}
+                      />
+                      {project.errors.endDate && <div className='invalid-feedback'>{project.errors.endDate}</div>}
+                    </div>
+                  </div>
+
+
+                  <div className='form-group row my-3 d-flex align-items-center justify-content-center'>
+                    <div className='col-md-8 offset-md-4'>
+                      <div className='form-check'>
+                        <input
+                          type='checkbox'
+                          id={`presentCheckbox-${index}`}
+                          name={`presentCheckbox-${index}`}
+                          checked={project.endDate === 'Present'}
+                          onChange={(e) => handlePresentCheckboxChange(index, e)}
+                          className='form-check-input'
+                        />
+                        <label htmlFor={`presentCheckbox-${index}`} className='form-check-label'>
+                          Present
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+
+
+
+
+                  {/* <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${project.errors.endDate ? 'has-error' : ''}`}>
                     <label htmlFor={`endDate-${index}`} className='col-md-4 col-form-label text-start'>
                       End Date
                     </label>
@@ -293,7 +370,10 @@ const EmpProjectDetailsForm = () => {
                       />
                       {project.errors.endDate && <div className='invalid-feedback'>{project.errors.endDate}</div>}
                     </div>
-                  </div>
+                  </div> */}
+
+
+
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${project.errors.technologiesUsed ? 'has-error' : ''}`}>
                     <label htmlFor={`technologiesUsed-${index}`} className='col-md-4 col-form-label text-start'>
                       Technologies Used
@@ -349,9 +429,12 @@ const EmpProjectDetailsForm = () => {
                   {index > 0 && (
                     <div className='form-group row my-3 d-flex align-items-center justify-content-end'>
                       <div className='col-sm-12 col-md-12 d-flex justify-content-end'>
-                        <button type='button' className='btn btn-danger' onClick={() => handleRemoveProject(index)}>
+                        {/* <button type='button' className='btn btn-danger' onClick={() => handleRemoveProject(index)}>
                           <Delete />
-                        </button>
+                        </button> */}
+                        <IconButton className='delete-project-button' onClick={() => handleRemoveProject(index)}>
+            <Delete />
+          </IconButton>
                       </div>
                     </div>
                   )}
@@ -383,22 +466,3 @@ const EmpProjectDetailsForm = () => {
 export default EmpProjectDetailsForm;
 
 
-
-// const handleProjectChange = (index, e) => {
-//   const { name, value } = e.target;
-//   const updatedProjects = [...projects];
-//   updatedProjects[index] = { ...updatedProjects[index], [name]: value };
-
-//   // Check if the end date is before the start date
-//   if (name === 'endDate' && value < updatedProjects[index].startDate) {
-//     const errors = { ...updatedProjects[index].errors };
-//     errors.endDate = 'End date cannot be before the start date';
-//     updatedProjects[index].errors = errors;
-//   } else {
-//     const errors = { ...updatedProjects[index].errors };
-//     delete errors.endDate;
-//     updatedProjects[index].errors = errors;
-//   }
-
-//   setProjects(updatedProjects);
-// };

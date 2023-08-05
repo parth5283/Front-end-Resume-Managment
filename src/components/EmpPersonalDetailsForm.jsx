@@ -6,6 +6,10 @@ import { updateName, updateEmail, updatePhoneNumber, updateAddress, updateZipCod
 import { KeyboardArrowRight } from '@mui/icons-material';
 
 
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // You may choose a different Quill theme or create a custom one.
+
+
 const EmpPersonalDetailsForm = () => {
   // const employeePersonal = useSelector((state) => state.employee);
   const location = useLocation();
@@ -22,6 +26,27 @@ const EmpPersonalDetailsForm = () => {
     profilesummary: ''
   });
 
+  const quillModules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['link'],
+      ['clean'],
+    ],
+  };
+
+  const quillFormats = [
+    'header',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'list',
+    'bullet',
+    'indent',
+    'link',
+  ];
 
   // Retrieve employee data from location state when navigating back from EmpProjectDetailsForm
   useEffect(() => {
@@ -188,23 +213,35 @@ const EmpPersonalDetailsForm = () => {
                   {errors.zipcode && <div className="invalid-feedback">{errors.zipcode}</div>}
                 </div>
               </div>
+
+
+
+
+
               <div className="form-group row mb-3 d-flex align-items-center justify-content-center">
-                <label htmlFor="profilesummary" className="col-md-4 col-form-label text-start">Profile Summary</label>
-                <div className="col-md-8">
-                  <textarea
-                    id="profilesummary"
-                    name="profilesummary"
-                    value={employee.profilesummary}
-                    onChange={handleChange}
-                    placeholder='Enter Summary'
-                    className={`form-control ${errors.profilesummary ? 'is-invalid' : ''}`}
-                  />
-                  {errors.profilesummary && <div className="invalid-feedback">{errors.profilesummary}</div>}
-                </div>
-              </div>
+        <label htmlFor="profilesummary" className="col-md-4 col-form-label text-start">
+          Profile Summary
+        </label>
+        <div className="col-md-8">
+          {/* Replace the textarea with the React Quill editor */}
+          <ReactQuill
+            id="profilesummary"
+            name="profilesummary"
+            value={employee.profilesummary}
+            onChange={(value) => handleChange({ target: { name: 'profilesummary', value } })}
+            placeholder="Enter Summary"
+            modules={quillModules}
+            formats={quillFormats}
+          />
+          {errors.profilesummary && <div className="invalid-feedback">{errors.profilesummary}</div>}
+        </div>
+      </div>
+
+
+
               <div className="form-group row mb-3 d-flex align-items-center justify-content-center  text-end" >
                 <div className="col-md-12">
-                  <button onClick={handleNext} className="btn btn-primary ">Next
+                  <button onClick={handleNext} className="btn btn-primary fixed-width-btn justify-text">Next
                     <KeyboardArrowRight />
                   </button>
                 </div>

@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { addSkillsCertificates, updateCertificationName, updateCertificationStartDate, updateCertificationEndDate } from '../redux/certificateSlice';
 import { updateSkills } from '../redux/skillSlice';
 import { resetProjectState } from '../redux/projectSlice';
-import { KeyboardArrowLeft, Delete, Add,Visibility, VerticalAlignBottom } from '@mui/icons-material';
+import { KeyboardArrowLeft, Delete, Add,Visibility} from '@mui/icons-material';
 
 
 

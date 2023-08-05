@@ -287,7 +287,8 @@ const Display = () => {
                         </div>
                         <div className='col-md-12 summary-details'>
                             <p>
-                                {empprofileSummary}
+                                {/* {empprofileSummary} */}
+                                <p dangerouslySetInnerHTML={{ __html: empprofileSummary }} />
                             </p>
                         </div>
                     </div>
@@ -364,7 +365,8 @@ const Display = () => {
                             {projects.map((project, index) => {
                                 const technologiesUsed = Object.values(project.project.technologiesUsed);
                                 const startDate = new Date(project.project.startDate);
-                                const endDate = new Date(project.project.endDate);
+                                // const endDate = new Date(project.project.endDate);
+                                const endDate = project.project.endDate === 'Present' ? 'Present' : new Date(project.project.endDate);
                                 const startMonthYear = startDate.toLocaleString('default', { month: 'long', year: 'numeric' });
                                 const endMonthYear = endDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
