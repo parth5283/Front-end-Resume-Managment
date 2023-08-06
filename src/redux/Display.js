@@ -95,7 +95,7 @@ const Display = () => {
           // Create the header content
           const opt = {
             filename: `${empname}-resume.pdf`,
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            jsPDF: { unit: 'mm', format: 'letter', orientation: 'portrait' },
             html2canvas: { scale: 2 },
             html2pdf: {
               margin: [50, 20, 20, 30],
