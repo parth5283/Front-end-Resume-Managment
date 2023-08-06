@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import html2pdf from 'html2pdf.js';
 import { useSelector } from 'react-redux';
-// import { jsPDF } from 'jspdf';
 import { getSkills } from './store';
 import axios from 'axios';
 import logo from '../images/preview-page-logo.png';
@@ -92,29 +91,19 @@ const Display = () => {
           // Generate PDF and save to the database
           const pdfElement = previewDataDisplayRef.current;
           const clonedPdfElement = pdfElement.cloneNode(true);
-          const footerDiv = document.createElement('div');
-          footerDiv.style.textAlign = 'center';
-          footerDiv.style.fontSize = '10px';
-          footerDiv.innerText = 'Footer Text - Page {pageNumber}';
-          clonedPdfElement.appendChild(footerDiv);
           clonedPdfElement.style.height = 'auto';
+          // Create the header content
           const opt = {
             filename: `${empname}-resume.pdf`,
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
             html2canvas: { scale: 2 },
             html2pdf: {
-              margin: [0, 20, 0, 30],
-              onAfterPageCreate: function (pdf, pageNumber) {
-                const totalPages = pdf.internal.getNumberOfPages();
-                const footerContent = footerDiv.cloneNode(true);
-                footerContent.innerHTML = footerContent.innerHTML.replace('{pageNumber}', pageNumber + ' of ' + totalPages);
-                pdf.addPage();
-                pdf.setPage(pageNumber + 1);
-                pdf.addImage(footerContent, 'center', 290, 100);
-              },
+              margin: [50, 20, 20, 30],
+             
             },
           };
           const pdf = new html2pdf().from(clonedPdfElement).set(opt);
+          
           const pdfBlob = await pdf.output('blob');
       
           const formData = new FormData();
@@ -287,8 +276,7 @@ const Display = () => {
                         </div>
                         <div className='col-md-12 summary-details'>
                             <p>
-                                {/* {empprofileSummary} */}
-                                <p dangerouslySetInnerHTML={{ __html: empprofileSummary }} />
+                                {empprofileSummary}
                             </p>
                         </div>
                     </div>
@@ -349,14 +337,10 @@ const Display = () => {
                         </div>
 
                     </div>
-
-
-
-
-
+                    
                     <hr className='horizontal-break' />
-
                     <div className="row project-summary-block page-break-before">
+                        
                         <div className="col-md-12 project-summary-heading">
                             <h4 className="font-weight-bold">Project Summary</h4>
                         </div>
@@ -365,8 +349,7 @@ const Display = () => {
                             {projects.map((project, index) => {
                                 const technologiesUsed = Object.values(project.project.technologiesUsed);
                                 const startDate = new Date(project.project.startDate);
-                                // const endDate = new Date(project.project.endDate);
-                                const endDate = project.project.endDate === 'Present' ? 'Present' : new Date(project.project.endDate);
+                                const endDate = new Date(project.project.endDate);
                                 const startMonthYear = startDate.toLocaleString('default', { month: 'long', year: 'numeric' });
                                 const endMonthYear = endDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
