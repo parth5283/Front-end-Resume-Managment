@@ -1,8 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit"
 
+
+
 const initialState = {
-  skills:[],
+  skills: [],
 }
+
 
 const skillReducer = createSlice({
   name: 'skillReducer',
@@ -11,11 +14,13 @@ const skillReducer = createSlice({
     reseSkills(state) {
       state.skills = [];
     },
-      saveSkills(state, action) {
+    saveSkills(state, action) {
       state = action.payload;
     }
   }
 })
+
+
 
 export const { saveSkills } = skillReducer.actions;
 export default skillReducer.reducer;

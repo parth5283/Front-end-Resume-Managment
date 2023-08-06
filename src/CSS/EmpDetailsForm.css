@@ -2,11 +2,11 @@
   display: flex;
   justify-content: center;
 }
+
 .emp_details_form {
   padding: 25px 0;
 
 }
-
 
 .form-heading-block {
   text-align: center;
@@ -22,15 +22,11 @@
   animation: fade-in 0.5s ease-in-out;
 }
 
-
-
-
 .form_block {
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
   border-radius: 10px;
-
   width: 700px;
   height: auto;
 }
@@ -88,66 +84,17 @@
   color: red;
 }
 
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
 .fade-in {
   animation: fadeIn 0.5s ease;
-}
-
-@keyframes slideInFromLeft {
-  from {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
 }
 
 .slide-in-from-left {
   animation: slideInFromLeft 0.5s ease;
 }
 
-@keyframes bounce {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 .bounce {
   animation: bounce 0.5s ease infinite;
 }
-
-
 
 .section-title {
   font-size: 32px;
@@ -187,24 +134,8 @@
   background-color: #0056b3;
 }
 
-@media (max-width: 767px) {
-  .container {
-    padding: 0 10px;
-  }
-
-  .col-md-2 {
-    display: none;
-  }
-
-  .col-sm-10 {
-    flex-basis: 100%;
-    max-width: 100%;
-  }
-}
-
-
-
-.add-project-button{
+.add-project-button,
+.add-certification-button {
   width: 34px !important;
   height: 34px !important;
   position: absolute !important;
@@ -216,7 +147,68 @@
   background-color: #59b7df !important;
 }
 
-.delete-project-button{
-  color: #f31101 !important; 
+.add-certification-button {
+  right: 28.5% !important;
+}
+
+.delete-project-button,
+.remove-certification {
+  color: #f31101 !important;
   background-color: transparent !important;
+}
+
+.remove-certification {
+  position: absolute !important;
+  right: 2% !important;
+  left: auto;
+  top: auto;
+  bottom: auto;
+  box-shadow: none !important;
+}
+
+
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }

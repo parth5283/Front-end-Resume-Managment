@@ -4,6 +4,8 @@ import '../CSS/SuccessPage.css'
 import { CheckCircle, ArrowBack } from '@mui/icons-material';
 import { Button } from '@mui/material';
 
+
+
 const SuccessPage = () => {
   return (
     <div className="success-page-container">
@@ -19,7 +21,6 @@ const SuccessPage = () => {
                 Employee record added successfully and saved to the database.
               </p>
               <div className="success-actions">
-                
                 <Button
                   variant="contained"
                   color="secondary"
@@ -47,5 +48,7 @@ const SuccessPage = () => {
     </div>
   );
 };
+
+
 
 export default SuccessPage;

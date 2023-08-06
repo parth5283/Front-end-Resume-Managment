@@ -2,22 +2,22 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
-import { useSelector, useDispatch } from 'react-redux';
-import { addSkillsCertificates, updateCertificationName, updateCertificationStartDate, updateCertificationEndDate } from '../redux/certificateSlice';
+import { useDispatch } from 'react-redux';
+import '../CSS/EmpDetailsForm.css';
 import { updateSkills } from '../redux/skillSlice';
 import { resetProjectState } from '../redux/projectSlice';
-import { KeyboardArrowLeft, Delete, Add,Visibility} from '@mui/icons-material';
+import { KeyboardArrowLeft, Visibility, Add, Delete } from '@mui/icons-material';
+import { Fab, IconButton } from '@mui/material';
+import { addSkillsCertificates, updateCertificationName, updateCertificationStartDate, updateCertificationEndDate } from '../redux/certificateSlice';
 
 
 
 const EmpSkillCertificationForm = () => {
 
-  const skils = useSelector((state) => state.skill.skills);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const { state } = location;
-  // const { employee, projects } = location.state || {};
   const { projects } = location.state || {};
   const [skills, setSkills] = useState(state?.skills || []);
   const [certificates, setCertifications] = useState(state?.certificates || [
@@ -33,11 +33,9 @@ const EmpSkillCertificationForm = () => {
 
   const handleCertificationChange = (index, e) => {
     const { name, value } = e.target;
-  
     const updatedCertifications = [...certificates];
     updatedCertifications[index] = { ...updatedCertifications[index], [name]: value };
-  
-    // Additional validation for Certification Expiry Date
+
     if (name === 'certificationExpiryDate') {
       const startDate = updatedCertifications[index].certificationStartDate;
       const expiryDate = value;
@@ -51,10 +49,9 @@ const EmpSkillCertificationForm = () => {
         }
       }
     }
-  
-    // Additional validation for Year (similar to startDate and endDate validation)
+
     if (['certificationStartDate', 'certificationExpiryDate'].includes(name)) {
-      const yearPattern = /^\d{4}$/; // Regular expression for exactly 4 digits
+      const yearPattern = /^\d{4}$/;
       const currentDate = new Date(value);
       const year = currentDate.getFullYear().toString();
       if (!year.match(yearPattern) || currentDate.getFullYear() < 1950 || currentDate.getFullYear() > 2099) {
@@ -67,13 +64,8 @@ const EmpSkillCertificationForm = () => {
         updatedCertifications[index].errors = errors;
       }
     }
-  
     setCertifications(updatedCertifications);
   };
-   
-  
-  
-
 
   const handleAddCertification = () => {
     const newCertificate = {
@@ -105,12 +97,7 @@ const EmpSkillCertificationForm = () => {
       skills.forEach((skill, index) => {
         dispatch(updateSkills({ index, skills: skills }));
       });
-
-      console.log("certificates", certificates);
-      console.log("skills", skills);
-      console.log("skils", skils)
       navigate('/display', { state: { ...state, skills, certificates } });
-      //console.log( 'data',{state: { employee: skills, certifications }});
     }
   };
 
@@ -153,6 +140,8 @@ const EmpSkillCertificationForm = () => {
     return formIsValid;
   };
 
+
+
   const handlePrevious = () => {
     dispatch(resetProjectState());
     navigate('/emp-project-details', { state: { ...state, projects } });
@@ -173,9 +162,9 @@ const EmpSkillCertificationForm = () => {
                 <div key={index} className='certification-details my-3'>
                   <h4 className='text-center'>
                     Certification {index + 1}
-                    <button type='button' className='add-certification-button float-right' onClick={handleAddCertification}>
+                    <Fab color='primary' aria-label='add' className='add-certification-button' onClick={handleAddCertification}>
                       <Add />
-                    </button>
+                    </Fab>
                   </h4>
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${certification.errors.certificationName ? 'has-error' : ''}`}>
                     <label htmlFor={`certificationName-${index}`} className='col-md-4 col-form-label text-start'>
@@ -232,9 +221,9 @@ const EmpSkillCertificationForm = () => {
                   {index > 0 && (
                     <div className='form-group row my-3 d-flex align-items-center justify-content-end'>
                       <div className='col-sm-12 col-md-12 d-flex justify-content-end'>
-                        <button type='button' className='btn btn-danger remove-certification' onClick={() => handleRemoveCertification(index)}>
+                        <IconButton className='remove-certification' onClick={() => handleRemoveCertification(index)}>
                           <Delete />
-                        </button>
+                        </IconButton>
                       </div>
                     </div>
                   )}
@@ -262,7 +251,7 @@ const EmpSkillCertificationForm = () => {
                     <KeyboardArrowLeft /> Previous
                   </button>
                   <button type='button' className='btn btn-primary fixed-width-btn justify-text' onClick={handlePreview}>
-                   Preview <Visibility  style={{ marginLeft: '5px', verticalAlign: 'bottom' }} />
+                    Preview <Visibility style={{ marginLeft: '5px', verticalAlign: 'bottom' }} />
                   </button>
                 </div>
               </div>

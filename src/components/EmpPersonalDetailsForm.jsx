@@ -2,16 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
-import { updateName, updateEmail, updatePhoneNumber, updateAddress, updateZipCode, updateProfileSummary } from '../redux/employeeSlice';
 import { KeyboardArrowRight } from '@mui/icons-material';
+import RichTextEditor from './RichTextEditor'
+import'../CSS/EmpDetailsForm.css';
+import { updateName, updateEmail, updatePhoneNumber, updateAddress, updateZipCode, updateProfileSummary } from '../redux/employeeSlice';
 
-
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // You may choose a different Quill theme or create a custom one.
 
 
 const EmpPersonalDetailsForm = () => {
-  // const employeePersonal = useSelector((state) => state.employee);
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -25,30 +23,6 @@ const EmpPersonalDetailsForm = () => {
     zipcode: '',
     profilesummary: ''
   });
-
-  const quillModules = {
-    toolbar: [
-      [{ header: [1, 2, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link'],
-      ['clean'],
-    ],
-  };
-
-  const quillFormats = [
-    'header',
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'list',
-    'bullet',
-    'indent',
-    'link',
-  ];
-
-  // Retrieve employee data from location state when navigating back from EmpProjectDetailsForm
   useEffect(() => {
     if (location.state && location.state.employee) {
       setEmployee(location.state.employee);
@@ -56,10 +30,13 @@ const EmpPersonalDetailsForm = () => {
   }, [location.state]);
 
 
+
   const handleChange = (e) => {
     setEmployee({ ...employee, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: '' });
   };
+
+
 
   const validateForm = () => {
     let isValid = true;
@@ -99,34 +76,31 @@ const EmpPersonalDetailsForm = () => {
   };
 
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
       try {
         await axios.post('http://localhost:8080/api/v1/employees/save', employee);
-        console.log('Employee added successfully');
-      } catch (error) {
-        console.error('Failed to add employee:', error);
-      }
-      console.log(employee);
+      } catch (error) { }
     }
   };
+
 
 
   const handleNext = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      // console.log('Dispatching updateName:', employee.name);
       dispatch(updateName(employee.name));
       dispatch(updateEmail(employee.email));
       dispatch(updatePhoneNumber(employee.phonenumber));
       dispatch(updateAddress(employee.address));
       dispatch(updateZipCode(employee.zipcode));
       dispatch(updateProfileSummary(employee.profilesummary));
-      // console.log('Dispatching employee:', { state: { employee } });
       navigate('/emp-project-details', { state: { employee } });
     }
   };
+
 
 
   return (
@@ -213,32 +187,21 @@ const EmpPersonalDetailsForm = () => {
                   {errors.zipcode && <div className="invalid-feedback">{errors.zipcode}</div>}
                 </div>
               </div>
-
-
-
-
-
               <div className="form-group row mb-3 d-flex align-items-center justify-content-center">
-        <label htmlFor="profilesummary" className="col-md-4 col-form-label text-start">
-          Profile Summary
-        </label>
-        <div className="col-md-8">
-          {/* Replace the textarea with the React Quill editor */}
-          <ReactQuill
-            id="profilesummary"
-            name="profilesummary"
-            value={employee.profilesummary}
-            onChange={(value) => handleChange({ target: { name: 'profilesummary', value } })}
-            placeholder="Enter Summary"
-            modules={quillModules}
-            formats={quillFormats}
-          />
-          {errors.profilesummary && <div className="invalid-feedback">{errors.profilesummary}</div>}
-        </div>
-      </div>
-
-
-
+                <label htmlFor="profilesummary" className="col-md-4 col-form-label text-start">
+                  Profile Summary
+                </label>
+                <div className="col-md-8">
+                  <RichTextEditor
+                    value={employee.profilesummary}
+                    onChange={(value) => handleChange({ target: { name: 'profilesummary', value } })}
+                    placeholder="Enter Summary"
+                    error={errors.profilesummary}
+                    errorMessage="Profile Summary is required"
+                  />
+                </div>
+                {errors.profilesummary && <div className='invalid-feedback'>{errors.profilesummary}</div>}
+              </div>
               <div className="form-group row mb-3 d-flex align-items-center justify-content-center  text-end" >
                 <div className="col-md-12">
                   <button onClick={handleNext} className="btn btn-primary fixed-width-btn justify-text">Next
@@ -253,5 +216,7 @@ const EmpPersonalDetailsForm = () => {
     </>
   );
 };
+
+
 
 export default EmpPersonalDetailsForm;

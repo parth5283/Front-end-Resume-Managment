@@ -11,7 +11,7 @@ const rootReducer = combineReducers({
   project: projectReducer,
   skill: skillsReducer,
   certificate: certificateReducer,
-   form: formReducer,
+  form: formReducer,
 });
 
 const store = configureStore({

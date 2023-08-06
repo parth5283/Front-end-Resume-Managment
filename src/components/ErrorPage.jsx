@@ -3,6 +3,8 @@ import { Button } from '@mui/material';
 import { Replay, ArrowBack } from '@mui/icons-material';
 import '../CSS/ErrorPage.css';
 
+
+
 const ErrorPage = () => {
   return (
     <div className="error-page-container">
@@ -20,7 +22,7 @@ const ErrorPage = () => {
                   <ArrowBack sx={{ marginRight: '8px' }} /> Go Back
                 </Button>
                 <Button variant="contained" color="primary" onClick={() => window.location.reload()}>
-                  <Replay  sx={{ marginRight: '8px' }} /> Retry
+                  <Replay sx={{ marginRight: '8px' }} /> Retry
                 </Button>
               </div>
             </div>
@@ -30,5 +32,7 @@ const ErrorPage = () => {
     </div>
   );
 };
+
+
 
 export default ErrorPage;

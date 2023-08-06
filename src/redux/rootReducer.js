@@ -7,8 +7,7 @@ const rootReducer = combineReducers({
   employee: employeeReducer,
   project: projectReducer,
   certificate: certificateReducer,
-  skill:skillReducer,
-  // Add other reducers here
+  skill: skillReducer,
 });
 
 export default rootReducer;

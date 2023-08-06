@@ -1,8 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit"
 
+
+
 const initialState = {
     employeeDetails: null
 }
+
 
 const employeeReducer = createSlice({
     name: 'employeeReducer',
@@ -13,6 +16,8 @@ const employeeReducer = createSlice({
         }
     }
 })
+
+
 
 export const { saveEmployeeDetails } = employeeReducer.actions;
 export default employeeReducer.reducer;

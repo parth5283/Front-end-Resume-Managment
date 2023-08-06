@@ -1,8 +1,8 @@
 import { RESET_FORM_DATA } from '../redux/actions';
 
-const initialState = {
-  // Your initial form state goes here
-};
+
+
+const initialState = {};
 
 const clearProjectReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -12,5 +12,8 @@ const clearProjectReducer = (state = initialState, action) => {
       return state;
   }
 };
+
+
+
 
 export default clearProjectReducer;

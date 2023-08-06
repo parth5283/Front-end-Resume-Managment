@@ -3,21 +3,20 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import 'react-tagsinput/react-tagsinput.css';
 import TagsInput from 'react-tagsinput';
 import { useDispatch } from 'react-redux';
-import { addProject, updateProjectName, updateStartDate, updateEndDate, updateTechnologiesUsed, updateRolesAndResponsbilities, updateProjectDescription } from '../redux/projectSlice';
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
-
 import { Fab, IconButton } from '@mui/material';
-import { Add, Delete } from '@mui/icons-material';
+import { Add, Delete, KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
+import RichTextEditor from './RichTextEditor';
+import '../CSS/EmpDetailsForm.css';
+import { addProject, updateProjectName, updateStartDate, updateEndDate, updateTechnologiesUsed, updateRolesAndResponsbilities, updateProjectDescription } from '../redux/projectSlice';
+
 
 
 const EmpProjectDetailsForm = () => {
-  // const projectss = useSelector((state) => state.project.projects);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { state } = location;
   const { employee } = location.state || {};
-
   const [projects, setProjects] = useState(state?.projects || [
     {
       projectName: '',
@@ -58,6 +57,7 @@ const EmpProjectDetailsForm = () => {
   }, [projects]);
 
 
+
   const formatDateInput = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -65,12 +65,13 @@ const EmpProjectDetailsForm = () => {
     return `${year}-${month}-${day}`;
   };
 
+
+
   const handleProjectChange = (index, e) => {
     const { name, value } = e.target;
     const updatedProjects = [...projects];
     updatedProjects[index] = { ...updatedProjects[index], [name]: value };
 
-    // Check if the end date is before the start date
     if (name === 'endDate' && value < updatedProjects[index].startDate) {
       const errors = { ...updatedProjects[index].errors };
       errors.endDate = 'End date cannot be before the start date';
@@ -81,7 +82,6 @@ const EmpProjectDetailsForm = () => {
       updatedProjects[index].errors = errors;
     }
 
-    // Additional validation to prevent dates before 1950 and more than 4 digits for the year
     if (name === 'startDate' || name === 'endDate') {
       const yearPattern = /^\d{1,4}$/; // Regular expression for 1 to 4 digits
       const currentDate = new Date(value);
@@ -96,7 +96,6 @@ const EmpProjectDetailsForm = () => {
         updatedProjects[index].errors = errors;
       }
 
-      // Convert the date to the correct format "yyyy-MM-dd" before updating the state
       const formattedDate = formatDateInput(currentDate);
       e.target.value = formattedDate;
     }
@@ -106,51 +105,20 @@ const EmpProjectDetailsForm = () => {
 
 
 
-  const handlePresentCheckboxChange = (index, e) => {
-    const { checked } = e.target;
-    const updatedProjects = [...projects];
-    if (checked) {
-      // If "Present" is checked, store the original endDate value and set endDate to 'Present'
-      updatedProjects[index] = {
-        ...updatedProjects[index],
-        originalEndDate: updatedProjects[index].endDate, // Store the original endDate value
-        endDate: 'Present',
-        errors: { ...updatedProjects[index].errors, endDate: '' },
-      };
-    } else {
-      // If "Present" is unchecked, restore the original endDate value and validate it again
-      const originalEndDate = updatedProjects[index].originalEndDate;
-      const errors = { ...updatedProjects[index].errors };
-      if (!originalEndDate || originalEndDate.trim() === '') {
-        errors.endDate = 'Please select an end date';
-      }
-      updatedProjects[index] = {
-        ...updatedProjects[index],
-        endDate: originalEndDate, // Restore the original endDate value
-        errors,
-      };
-    }
-    setProjects(updatedProjects);
-  };
-
-
-
   const handleTechnologiesChange = (index, tags) => {
     const updatedProjects = [...projects];
     updatedProjects[index] = { ...updatedProjects[index], technologiesUsed: tags };
 
-    // Validation for Technologies Used
     const errors = { ...updatedProjects[index].errors };
     if (tags.length === 0) {
       errors.technologiesUsed = 'Please enter at least one technology used';
     } else {
       delete errors.technologiesUsed;
     }
-
     updatedProjects[index].errors = errors;
-
     setProjects(updatedProjects);
   };
+
 
 
   const handleAddProject = () => {
@@ -166,6 +134,8 @@ const EmpProjectDetailsForm = () => {
 
     setProjects([...projects, newProject]);
   };
+
+
 
   const handleRemoveProject = (index) => {
     const updatedProjects = [...projects];
@@ -183,7 +153,6 @@ const EmpProjectDetailsForm = () => {
 
   const handleNext = () => {
     if (validateForm()) {
-      // dispatch(saveProjectDetails(projects));
       projects.forEach((project, index) => {
         dispatch(updateProjectName({ index, name: project.projectName }));
         dispatch(updateStartDate({ index, startDate: project.startDate }));
@@ -192,8 +161,6 @@ const EmpProjectDetailsForm = () => {
         dispatch(updateRolesAndResponsbilities({ index, rolesAndResponsibilities: project.rolesAndResponsibilities }));
         dispatch(updateProjectDescription({ index, projectDescription: project.projectDescription }));
       });
-      // console.log("Projects",projects)
-      //console.log("projectReducer",projectss);
       navigate('/emp-certificates-skills-form', { state: { ...state, projects } });
     }
   };
@@ -205,7 +172,7 @@ const EmpProjectDetailsForm = () => {
     for (let i = 0; i < updatedProjects.length; i++) {
       const project = updatedProjects[i];
       const errors = {};
-      //  console.log("loop",i);
+
       if (project.projectName.trim() === '') {
         errors.projectName = 'Please enter a project name';
         formIsValid = false;
@@ -251,10 +218,10 @@ const EmpProjectDetailsForm = () => {
     }
 
     setProjects(updatedProjects);
-
     return formIsValid;
-
   };
+
+
 
   return (
     <>
@@ -269,9 +236,6 @@ const EmpProjectDetailsForm = () => {
                 <div key={index} className='project-details my-3'>
                   <h4 className='text-center'>
                     Project {index + 1}
-                    {/* <button type='button' className='add-project-button float-right' onClick={handleAddProject}>
-                      <Add />
-                    </button> */}
                     <Fab color='primary' aria-label='add' className='add-project-button' onClick={handleAddProject}>
                       <Add />
                     </Fab>
@@ -311,50 +275,7 @@ const EmpProjectDetailsForm = () => {
                       {project.errors.startDate && <div className='invalid-feedback'>{project.errors.startDate}</div>}
                     </div>
                   </div>
-
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${project.errors.endDate ? 'has-error' : ''}`}>
-                    <label htmlFor={`endDate-${index}`} className='col-md-4 col-form-label text-start'>
-                      End Date
-                    </label>
-                    <div className='col-md-8'>
-                      <input
-                        type='date'
-                        id={`endDate-${index}`}
-                        name='endDate'
-                        value={project.endDate === 'Present' ? '' : project.endDate}
-                        onChange={(e) => handleProjectChange(index, e)}
-                        className={`form-control ${project.errors.endDate ? 'is-invalid' : ''}`}
-                        required={!project.endDate === 'Present'}
-                        disabled={project.endDate === 'Present'}
-                      />
-                      {project.errors.endDate && <div className='invalid-feedback'>{project.errors.endDate}</div>}
-                    </div>
-                  </div>
-
-
-                  <div className='form-group row my-3 d-flex align-items-center justify-content-center'>
-                    <div className='col-md-8 offset-md-4'>
-                      <div className='form-check'>
-                        <input
-                          type='checkbox'
-                          id={`presentCheckbox-${index}`}
-                          name={`presentCheckbox-${index}`}
-                          checked={project.endDate === 'Present'}
-                          onChange={(e) => handlePresentCheckboxChange(index, e)}
-                          className='form-check-input'
-                        />
-                        <label htmlFor={`presentCheckbox-${index}`} className='form-check-label'>
-                          Present
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-
-
-
-
-
-                  {/* <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${project.errors.endDate ? 'has-error' : ''}`}>
                     <label htmlFor={`endDate-${index}`} className='col-md-4 col-form-label text-start'>
                       End Date
                     </label>
@@ -370,10 +291,7 @@ const EmpProjectDetailsForm = () => {
                       />
                       {project.errors.endDate && <div className='invalid-feedback'>{project.errors.endDate}</div>}
                     </div>
-                  </div> */}
-
-
-
+                  </div>
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${project.errors.technologiesUsed ? 'has-error' : ''}`}>
                     <label htmlFor={`technologiesUsed-${index}`} className='col-md-4 col-form-label text-start'>
                       Technologies Used
@@ -397,59 +315,53 @@ const EmpProjectDetailsForm = () => {
                       Roles and Responsibilities
                     </label>
                     <div className='col-md-8'>
-                      <textarea
+                      <RichTextEditor
                         id={`rolesAndResponsibilities-${index}`}
                         name='rolesAndResponsibilities'
                         value={project.rolesAndResponsibilities}
-                        onChange={(e) => handleProjectChange(index, e)}
+                        onChange={(value) => handleProjectChange(index, { target: { name: 'rolesAndResponsibilities', value } })}
                         placeholder='Enter Roles and Responsibilities'
-                        className={`form-control ${project.errors.rolesAndResponsibilities ? 'is-invalid' : ''}`}
-                        required
+                        error={project.errors.rolesAndResponsibilities}
+                        errorMessage="Roles and Responsibilities are required"
                       />
-                      {project.errors.rolesAndResponsibilities && <div className='invalid-feedback'>{project.errors.rolesAndResponsibilities}</div>}
                     </div>
+                    {project.errors.rolesAndResponsibilities && <div className='invalid-feedback'>{project.errors.rolesAndResponsibilities}</div>}
                   </div>
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${project.errors.projectDescription ? 'has-error' : ''}`}>
                     <label htmlFor={`projectDescription-${index}`} className='col-md-4 col-form-label text-start'>
                       Project Description
                     </label>
                     <div className='col-md-8'>
-                      <textarea
+                      <RichTextEditor
                         id={`projectDescription-${index}`}
                         name='projectDescription'
                         value={project.projectDescription}
-                        onChange={(e) => handleProjectChange(index, e)}
+                        onChange={(value) => handleProjectChange(index, { target: { name: 'projectDescription', value } })}
                         placeholder='Enter Project Description'
-                        className={`form-control ${project.errors.projectDescription ? 'is-invalid' : ''}`}
-                        required
+                        error={project.errors.projectDescription}
+                        errorMessage="Project Description is required"
                       />
-                      {project.errors.projectDescription && <div className='invalid-feedback'>{project.errors.projectDescription}</div>}
                     </div>
+                    {project.errors.projectDescription && <div className='invalid-feedback'>{project.errors.projectDescription}</div>}
                   </div>
                   {index > 0 && (
                     <div className='form-group row my-3 d-flex align-items-center justify-content-end'>
                       <div className='col-sm-12 col-md-12 d-flex justify-content-end'>
-                        {/* <button type='button' className='btn btn-danger' onClick={() => handleRemoveProject(index)}>
-                          <Delete />
-                        </button> */}
                         <IconButton className='delete-project-button' onClick={() => handleRemoveProject(index)}>
-            <Delete />
-          </IconButton>
+                          <Delete />
+                        </IconButton>
                       </div>
                     </div>
                   )}
                 </div>
               ))}
-
               <div className='form-group row mb-3 d-flex align-items-center justify-content-center  px-3'>
-
                 <div className=' col-md-6 d-flex text-start'>
                   <button type='button' className='btn btn-secondary fixed-width-btn justify-text' onClick={handlePrevious}>
                     <KeyboardArrowLeft /> Previous
                   </button>
                 </div>
                 <div className='col-md-6 text-end'>
-
                   <button type='button' className='btn btn-primary fixed-width-btn justify-text' onClick={handleNext}>
                     Next <KeyboardArrowRight />
                   </button>
@@ -462,6 +374,8 @@ const EmpProjectDetailsForm = () => {
     </>
   );
 };
+
+
 
 export default EmpProjectDetailsForm;
 

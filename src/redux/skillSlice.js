@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
-  skills: [], // Make sure this line is present
-  // Other properties...
+  skills: [],
 };
 const skillSlice = createSlice({
   name: 'skill',
@@ -10,14 +9,14 @@ const skillSlice = createSlice({
     updateSkills: (state, action) => {
       state.skills = [...state.skills, action.payload];
     },
-      resetSkillState: (state) => {
-       
-        state.skills = [];
-      },
+    resetSkillState: (state) => {
+
+      state.skills = [];
+    },
   },
 });
 export const resetSkills = () => ({
   type: 'skill/resetSkills',
 });
-export const { updateSkills,resetSkillState } = skillSlice.actions;
+export const { updateSkills, resetSkillState } = skillSlice.actions;
 export default skillSlice.reducer;

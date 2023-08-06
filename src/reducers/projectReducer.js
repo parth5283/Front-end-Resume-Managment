@@ -1,20 +1,25 @@
-  import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit"
 
-  const initialState = {
-    projects:[],
+
+
+const initialState = {
+  projects: [],
+}
+
+
+const projectReducer = createSlice({
+  name: 'projectReducer',
+  initialState,
+  reducers: {
+
+    saveProjectDetails(state, action) {
+      state.projectDetails = action.payload;
+    },
+    clearProjectDetails: () => initialState,
   }
-  
-  const projectReducer = createSlice({
-    name: 'projectReducer',
-    initialState,
-    reducers: {
-      
-        saveProjectDetails(state, action) {
-          state.projectDetails = action.payload;
-      },
-      clearProjectDetails:() => initialState,
-    }
-  })
+})
 
-  export const { saveProjectDetails, clearProjectDetails } = projectReducer.actions;
-  export default projectReducer.reducer;
+
+
+export const { saveProjectDetails, clearProjectDetails } = projectReducer.actions;
+export default projectReducer.reducer;
