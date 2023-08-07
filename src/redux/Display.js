@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import html2pdf from 'html2pdf.js';
 import { useSelector } from 'react-redux';
 import { getSkills } from './store';
-import axios from 'axios';
+import axios from '../apis/ResumeFinder'
 import logo from '../images/preview-page-logo.png';
 import '../CSS/previewdata.css';
 import { useDispatch } from 'react-redux';
@@ -49,7 +49,7 @@ const Display = () => {
                 profilesummary: empprofileSummary,
             };
 
-            const employeeResponse = await axios.post('http://localhost:8080/api/v1/employees/add-employee', employeeData);
+            const employeeResponse = await axios.post('/add-employee', employeeData);
 
             const { message, employeeId } = employeeResponse.data;
             console.log("message", message);
@@ -66,7 +66,7 @@ const Display = () => {
                 },
             }));
 
-            await axios.post('http://localhost:8080/api/v1/employees/add-projects', { projects: projectData });
+            await axios.post('/add-projects', { projects: projectData });
 
             const certificateData = certificates.map((certificate) => ({
                 employeeId: employeeResponse.data.employeeId,
@@ -78,7 +78,7 @@ const Display = () => {
                 },
             }));
 
-            await axios.post('http://localhost:8080/api/v1/employees/add-certificate-details', { certificates: certificateData });
+            await axios.post('/add-certificate-details', { certificates: certificateData });
 
             const pdfElement = previewDataDisplayRef.current;
             const clonedPdfElement = pdfElement.cloneNode(true);
@@ -98,7 +98,7 @@ const Display = () => {
             formData.append('employeeId', employeeId);
             formData.append('pdfData', pdfBlob);
 
-            await axios.post('http://localhost:8080/api/v1/employees/save-PDFtoDb', formData, {
+            await axios.post('/save-PDFtoDb', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

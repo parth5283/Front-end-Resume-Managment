@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../apis/ResumeFinder'
 import { useDispatch } from 'react-redux';
 import { KeyboardArrowRight } from '@mui/icons-material';
 import RichTextEditor from './RichTextEditor'
@@ -81,7 +81,7 @@ const EmpPersonalDetailsForm = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        await axios.post('http://localhost:8080/api/v1/employees/save', employee);
+        await axios.post('/save', employee);
       } catch (error) { }
     }
   };

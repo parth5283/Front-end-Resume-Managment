@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../CSS/EmployeeSearchTable.css';
-import axios from 'axios';
 import { Delete, Download, Visibility, Search } from '@mui/icons-material';
-
+import axios from '../apis/ResumeFinder'
 
 
 const EmployeeSearchTable = () => {
@@ -11,7 +10,7 @@ const EmployeeSearchTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/v1/employees');
+        const response = await axios.get('/');
         setEmployees(response.data);
       } 
       catch (error) {
@@ -31,7 +30,7 @@ const EmployeeSearchTable = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/api/v1/employees/${id}`);
+      await axios.delete(`/${id}`);
       const updatedEmployees = employees.filter((employee) => employee.employeeid !== id);
       setEmployees(updatedEmployees);
     } 
@@ -43,7 +42,7 @@ const EmployeeSearchTable = () => {
 
   const handleDownload = async (employeeid) => {
     axios
-      .get(`http://localhost:8080/api/v1/employees/resume/${employeeid}`, {
+      .get(`/resume/${employeeid}`, {
         responseType: 'blob', // This is important to handle binary data
       })
       .then((response) => {
@@ -78,7 +77,7 @@ const EmployeeSearchTable = () => {
 
   const handleView = (employeeid) => {
     axios
-      .get(`http://localhost:8080/api/v1/employees/resume/${employeeid}`, {
+      .get(`/resume/${employeeid}`, {
         responseType: 'blob',
       })
       .then((response) => {
