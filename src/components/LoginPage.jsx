@@ -31,7 +31,7 @@ const LoginPage = ({ handleLogin }) => {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const response = await axios.post('http://localhost:8080/login', {
+        const response = await axios.post('http://18.116.50.68:8080/login', {
           username: username,
           password: password,
         });
