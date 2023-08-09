@@ -162,7 +162,7 @@
 }
 .add-btn-wrapper{
   display: inline-block;
-  float:right;
+  /* float:right; */
 }
 
 @keyframes bounce {
