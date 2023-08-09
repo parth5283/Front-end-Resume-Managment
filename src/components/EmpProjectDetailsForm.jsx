@@ -236,9 +236,11 @@ const EmpProjectDetailsForm = () => {
                 <div key={index} className='project-details my-3'>
                   <h4 className='text-center'>
                     Project {index + 1}
-                    <Fab color='primary' aria-label='add' className='add-project-button' onClick={handleAddProject}>
-                      <Add />
-                    </Fab>
+                    <div className='add-btn-wrapper'>
+                      <Fab color='primary' aria-label='add' className='add-project-button' onClick={handleAddProject}>
+                        <Add />
+                      </Fab>
+                    </div>
                   </h4>
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${project.errors.projectName ? 'has-error' : ''}`}>
                     <label htmlFor={`projectName-${index}`} className='col-md-4 col-form-label text-start'>

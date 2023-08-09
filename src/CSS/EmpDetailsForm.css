@@ -138,18 +138,13 @@
 .add-certification-button {
   width: 34px !important;
   height: 34px !important;
-  position: absolute !important;
-  right: 30%;
-  left: auto;
-  top: auto;
-  bottom: auto;
-  box-shadow: none !important;
+  position: relative !important;
   background-color: #59b7df !important;
 }
 
-.add-certification-button {
+/* .add-certification-button {
   right: 28.5% !important;
-}
+} */
 
 .delete-project-button,
 .remove-certification {
@@ -165,7 +160,10 @@
   bottom: auto;
   box-shadow: none !important;
 }
-
+.add-btn-wrapper{
+  display: inline-block;
+  float:right;
+}
 
 @keyframes bounce {
 

@@ -162,9 +162,11 @@ const EmpSkillCertificationForm = () => {
                 <div key={index} className='certification-details my-3'>
                   <h4 className='text-center'>
                     Certification {index + 1}
-                    <Fab color='primary' aria-label='add' className='add-certification-button' onClick={handleAddCertification}>
+                    <div className='add-btn-wrapper'>
+                     <Fab color='primary' aria-label='add' className='add-certification-button' onClick={handleAddCertification}>
                       <Add />
                     </Fab>
+                    </div>
                   </h4>
                   <div className={`form-group row my-3 d-flex align-items-center justify-content-center ${certification.errors.certificationName ? 'has-error' : ''}`}>
                     <label htmlFor={`certificationName-${index}`} className='col-md-4 col-form-label text-start'>
